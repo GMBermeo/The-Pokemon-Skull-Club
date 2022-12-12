@@ -1,0 +1,18 @@
+.Link{
+    @apply shadow-2xl shadow-orange-600/5 print:shadow-none;
+    grid-row-end: auto;
+    padding: 1rem;
+    margin: 0;
+    border-radius: 0.75rem/* 12px */;
+    background-color: #00000022;
+}
+
+@media print{
+    .Link{
+        display: block;
+        border-radius: 0;
+        background-color: transparent;
+        padding: 0;
+        
+    }
+}
