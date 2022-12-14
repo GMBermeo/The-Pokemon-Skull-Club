@@ -15,7 +15,6 @@ This is an auxiliary tool that lists every Magic the Gathering card with the typ
 ![React](https://img.shields.io/badge/react-%230d1117.svg?style=for-the-badge&logo=react)
 ![Tailwind CSS](https://img.shields.io/badge/tailwindcss-%230d1117?style=for-the-badge&logo=tailwindcss)
 ![Javascript](https://img.shields.io/badge/javascript-%230d1117.svg?style=for-the-badge&logo=javascript)
-![Vite](https://img.shields.io/badge/vite-%230d1117.svg?style=for-the-badge&logo=vite&logoColor=%23646CFF)
 ![Deployed on Vercel](https://img.shields.io/badge/vercel-%230d1117.svg?style=for-the-badge&logo=vercel)
 
 ## project setup
