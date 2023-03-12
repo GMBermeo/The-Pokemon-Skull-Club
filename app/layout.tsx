@@ -1,4 +1,8 @@
-export default function Layout({
+import { Container, Typography } from "@mui/material";
+
+import { use } from "react";
+
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
