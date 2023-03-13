@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ["cards.scryfall.io"],
+    domains: ["images.pokemontcg.io"],
   },
   i18n: {
     locales: ["en"],

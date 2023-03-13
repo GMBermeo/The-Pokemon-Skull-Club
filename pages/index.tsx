@@ -7,6 +7,7 @@ import Masonry from "@mui/lab/Masonry";
 import { styled } from "@mui/material/styles";
 import { Stack, Typography } from "@mui/material";
 import { Label } from "@mui/icons-material";
+import { loadCards } from "../lib/loadCards";
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
@@ -55,14 +56,16 @@ const Home: NextPage<HomeProps> = ({ cardCollection }) => {
         {/* {cardCollection.id} */}
         <Masonry
           columns={{ xs: 2, sm: 3, md: 4, lg: 5, xl: 6 }}
-          spacing={{ xs: 1, md: 2, xl: 3 }}
+          // spacing={{ xs: 1, md: 2, xl: 3 }}
         >
           {cardCollection.map((card, index) => (
             <Stack key={index}>
-              {card?.nationalPokedexNumbers?.map((dexNumber) => (
-                <Typography color={"white"}>{dexNumber}</Typography>
-              ))}
-              <Typography color={"white"}>
+              <Typography color={"white"} fontSize={14} fontWeight={1}>
+                #{card?.nationalPokedexNumbers![0]} (index: {index + 1}) page:
+                {Math.ceil(index / 9)}
+              </Typography>
+
+              <Typography color={"white"} fontSize={10}>
                 $ {card.tcgplayer?.prices.normal?.high} / ${" "}
                 {card.tcgplayer?.prices.normal?.market} / ${" "}
                 {card.tcgplayer?.prices.holofoil?.high} / ${" "}
@@ -70,7 +73,7 @@ const Home: NextPage<HomeProps> = ({ cardCollection }) => {
               </Typography>
               <img
                 src={card.images.small}
-                alt={card.id}
+                alt={`${card.name} (${card.id})`}
                 loading="lazy"
                 style={{
                   borderRadius: 8,
@@ -94,28 +97,7 @@ const Home: NextPage<HomeProps> = ({ cardCollection }) => {
 export default Home;
 
 export async function getServerSideProps() {
-  const cardCollection = [];
-  // const paramsTudo: PokemonTCG.Parameter = {
-  //   // q: `nationalPokedexNumbers:[1 TO 150] (rarity:common OR rarity:uncommon OR rarity:rare OR rarity:amazing)`,
-  //   q: `nationalPokedexNumbers:[1 TO 150] (-rarity:holo OR -rarity:promo)`,
-  //   orderBy: "-tcgplayer.prices.high",
-  // };
-  // const cardCollection = await PokemonTCG.findCardsByQueries(paramsTudo);
-
-  for (let i = 1; i <= 151; i++) {
-    const paramsV2: PokemonTCG.Parameter = {
-      q: `nationalPokedexNumbers:${i} (-rarity:holo AND -rarity:promo AND -rarity:rare)`,
-      pageSize: 1,
-      orderBy: "-tcgplayer.prices.high",
-    };
-
-    const response = await PokemonTCG.findCardsByQueries(paramsV2);
-    const card = response[0];
-
-    if (card) {
-      cardCollection.push(card);
-    }
-  }
+  const cardCollection = await loadCards(151);
 
   return {
     props: { cardCollection },

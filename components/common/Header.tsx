@@ -14,10 +14,7 @@ export const Header = () => {
           height={48}
           priority
         /> */}
-        The Full Art Lands of
-        <span className="font-mtg my-auto ml-2 self-end text-xl md:mt-auto md:mb-0 md:text-4xl">
-          Magic the Gathering
-        </span>
+        A personal Pokémon TCG Collection
       </h1>
     </Link>
   );
