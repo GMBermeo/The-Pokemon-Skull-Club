@@ -1,14 +1,5 @@
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
 
-export function sleep(): Promise<void> {
-  if (!process.env.IS_BUILD) {
-    return Promise.resolve();
-  }
-  const ms = Math.floor(123.5 * (Math.random() + 2));
-  console.log(`😴Building: ${ms}ms💤`);
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 export async function loadCards(
   startPokemon: number,
   totalPokemons: number
@@ -66,7 +57,6 @@ export async function loadCards(
     const card = response[0];
     if (card) {
       cardCollection.push(card);
-      await sleep();
     }
   }
 
