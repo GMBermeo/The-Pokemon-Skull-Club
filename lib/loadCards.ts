@@ -17,7 +17,7 @@ export async function loadCards(
     "TAG",
   ];
 
-  const regions = ["alola*", "dark*", "galar*", "hisui*", "paldea*"];
+  const regions = ["alola*", "galar*", "hisui*", "paldea*"];
 
   const generalFilter: string = `(-subtypes:${subtypes
     .map((subtype) => `${subtype}`)
@@ -30,7 +30,7 @@ export async function loadCards(
   // Add the parameters for the first query
   for (let i = startPokemon; i <= totalPokemons; i++) {
     const params: PokemonTCG.Parameter = {
-      q: `nationalPokedexNumbers:${i} ${generalFilter}`,
+      q: `nationalPokedexNumbers:${i} ${generalFilter} `,
       pageSize: 1,
       orderBy: "-tcgplayer.prices.normal.high, -tcgplayer.prices.holofoil.high",
     };
@@ -41,7 +41,7 @@ export async function loadCards(
   for (let subtype of subtypes) {
     for (let i = startPokemon; i <= totalPokemons; i++) {
       const params: PokemonTCG.Parameter = {
-        q: `nationalPokedexNumbers:${i}  subtypes:${subtype}`,
+        q: `nationalPokedexNumbers:${i} subtypes:${subtype}`,
         pageSize: 1,
         orderBy:
           "-tcgplayer.prices.normal.high, -tcgplayer.prices.holofoil.high",
@@ -53,7 +53,7 @@ export async function loadCards(
   for (let region of regions) {
     for (let i = startPokemon; i <= totalPokemons; i++) {
       const params: PokemonTCG.Parameter = {
-        q: `nationalPokedexNumbers:${i}  name:${region}`,
+        q: `nationalPokedexNumbers:${i} name:${region}`,
         pageSize: 1,
         orderBy: "-tcgplayer.prices.high",
       };

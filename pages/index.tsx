@@ -70,7 +70,11 @@ const Home: NextPage<HomeProps> = ({ cardCollection }) => {
                 {card.tcgplayer?.prices.holofoil?.high} / ${" "}
                 {card.tcgplayer?.prices.holofoil?.market}
               </Typography>
-              <a href={card.images.large}>
+              <a
+                href={card.images.large}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <img
                   src={card.images.small}
                   alt={`${card.name} (${card.id}) ${card?.flavorText}`}

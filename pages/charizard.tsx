@@ -71,14 +71,20 @@ const Home: NextPage<HomeProps> = ({ cardCollection }) => {
                 {card.tcgplayer?.prices.holofoil?.high} / ${" "}
                 {card.tcgplayer?.prices.holofoil?.market}
               </Typography>
-              <img
-                src={card.images.small}
-                alt={`${card.name} (${card.id}) ${card?.flavorText}`}
-                loading="lazy"
-                style={{
-                  borderRadius: 8,
-                }}
-              />
+              <a
+                href={card.images.large}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src={card.images.small}
+                  alt={`${card.name} (${card.id}) ${card?.flavorText}`}
+                  loading="lazy"
+                  style={{
+                    borderRadius: 8,
+                  }}
+                />
+              </a>
             </Stack>
           ))}
         </Masonry>
@@ -97,7 +103,12 @@ const Home: NextPage<HomeProps> = ({ cardCollection }) => {
 export default Home;
 
 export async function getStaticProps() {
-  const cardCollection = await loadCards(6, 6);
+  const cardCollection: PokemonTCG.Card[] = await PokemonTCG.findCardsByQueries(
+    {
+      q: "nationalPokedexNumbers:6 supertype:pokemon",
+      orderBy: "-set.releaseDate, hp, -number",
+    }
+  );
 
   return {
     props: { cardCollection },

@@ -70,7 +70,11 @@ const Home: NextPage<HomeProps> = ({ cardCollection }) => {
                 {card.tcgplayer?.prices.holofoil?.high} / ${" "}
                 {card.tcgplayer?.prices.holofoil?.market}
               </Typography>
-              <a href={card.images.large}>
+              <a
+                href={card.images.large}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <img
                   src={card.images.small}
                   alt={`${card.name} (${card.id}) ${card?.flavorText}`}
@@ -100,7 +104,7 @@ export default Home;
 export async function getStaticProps() {
   const cardCollection: PokemonTCG.Card[] = await PokemonTCG.findCardsByQueries(
     {
-      q: "nationalPokedexNumbers:[1 TO 251] subtype:EX",
+      q: "nationalPokedexNumbers:[1 TO 151] subtypes:EX",
       orderBy: "-set.releaseDate, hp, -number",
     }
   );

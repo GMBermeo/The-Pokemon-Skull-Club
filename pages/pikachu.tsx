@@ -54,10 +54,7 @@ const Home: NextPage<HomeProps> = ({ cardCollection }) => {
         Total: {cardCollection.length} cards |{" "}
         {Math.ceil(cardCollection.length / 9)} pages
         {/* {cardCollection.id} */}
-        <Masonry
-          columns={{ xs: 2, sm: 3, md: 4, lg: 5, xl: 6 }}
-          // spacing={{ xs: 1, md: 2, xl: 3 }}
-        >
+        <Masonry columns={{ xs: 2, sm: 3, md: 4, lg: 5, xl: 6 }} spacing={1}>
           {cardCollection.map((card, index) => (
             <Stack key={index}>
               <Typography color={"white"} fontSize={14} fontWeight={1}>
@@ -71,14 +68,20 @@ const Home: NextPage<HomeProps> = ({ cardCollection }) => {
                 {card.tcgplayer?.prices.holofoil?.high} / ${" "}
                 {card.tcgplayer?.prices.holofoil?.market}
               </Typography>
-              <img
-                src={card.images.small}
-                alt={`${card.name} (${card.id}) ${card?.flavorText}`}
-                loading="lazy"
-                style={{
-                  borderRadius: 8,
-                }}
-              />
+              <a
+                href={card.images.large}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src={card.images.small}
+                  alt={`${card.name} (${card.id}) ${card?.flavorText}`}
+                  loading="lazy"
+                  style={{
+                    borderRadius: 8,
+                  }}
+                />
+              </a>
             </Stack>
           ))}
         </Masonry>
@@ -96,8 +99,13 @@ const Home: NextPage<HomeProps> = ({ cardCollection }) => {
 
 export default Home;
 
-export async function getStaticProps() {
-  const cardCollection = await loadCards(25, 25);
+export async function getServerSideProps() {
+  const cardCollection: PokemonTCG.Card[] = await PokemonTCG.findCardsByQueries(
+    {
+      q: "nationalPokedexNumbers:25 supertype:pokemon",
+      orderBy: "-set.releaseDate, hp, -number",
+    }
+  );
 
   return {
     props: { cardCollection },
