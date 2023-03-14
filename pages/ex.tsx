@@ -5,6 +5,7 @@ import Masonry from "@mui/lab/Masonry";
 
 import { styled } from "@mui/material/styles";
 import { Stack, Typography, Paper } from "@mui/material";
+import { loadCards } from "../lib/loadCards";
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
@@ -15,22 +16,20 @@ const Item = styled(Paper)(({ theme }) => ({
   justifyContent: "center",
 }));
 
-type BonesCollectionPageProps = {
-  bonesCollection: PokemonTCG.Card[];
+type HomeProps = {
+  cardCollection: PokemonTCG.Card[];
 };
 
-const BonesCollectionPage: NextPage<BonesCollectionPageProps> = ({
-  bonesCollection,
-}) => {
+const Home: NextPage<HomeProps> = ({ cardCollection }) => {
   return (
     <>
       <Head>
-        <title>Bones Collection</title>
+        <title>Pokémon TCG</title>
         <meta
           name="description"
           content="'If you're starving, eat your horses, your dead, or yourself—but NEVER eat your dog.' —General Jarkeld, the Arctic Fox. 🐾 This tool was developed using the Static Site Generation (SSG) concept with Next.js in order to index all the dog type cards of the Magic The Gathering for a private collection. 🐶 The source code can be found on github and easily changed to any other parameter."
         />
-        {/* 
+
         <meta property="og:title" content="The Lands of Magic the Gathering" />
         <meta
           property="og:description"
@@ -43,22 +42,22 @@ const BonesCollectionPage: NextPage<BonesCollectionPageProps> = ({
           }
         />
         <meta property="og:image:width" content="3000" />
-        <meta property="og:image:height" content="3000" /> */}
-        <meta property="og:url" content="https://pokemon-tcg.bermeo.dev/" />
+        <meta property="og:image:height" content="3000" />
+        <meta property="og:url" content="https://lands-of-mtg.bermeo.dev/" />
         <meta property="og:locale" content="en_US" />
       </Head>
       <div>
         {/* {cubones.map((card: Card) => (
         <div key={card.id}> {card.name}</div>
       ))}{" "} */}
-        Total: {bonesCollection.length} cards |{" "}
-        {Math.ceil(bonesCollection.length / 9)} pages
-        {/* {bonesCollection.id} */}
+        Total: {cardCollection.length} cards |{" "}
+        {Math.ceil(cardCollection.length / 9)} pages
+        {/* {cardCollection.id} */}
         <Masonry
           columns={{ xs: 2, sm: 3, md: 4, lg: 5, xl: 6 }}
           // spacing={{ xs: 1, md: 2, xl: 3 }}
         >
-          {bonesCollection.map((card, index) => (
+          {cardCollection.map((card, index) => (
             <Stack key={index}>
               <Typography color={"white"} fontSize={14} fontWeight={1}>
                 #{card?.nationalPokedexNumbers![0]} (index: {index + 1}) page:
@@ -71,14 +70,11 @@ const BonesCollectionPage: NextPage<BonesCollectionPageProps> = ({
                 {card.tcgplayer?.prices.holofoil?.high} / ${" "}
                 {card.tcgplayer?.prices.holofoil?.market}
               </Typography>
-              <a
-                href={card.images.large}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href={card.images.large}>
                 <img
                   src={card.images.small}
                   alt={`${card.name} (${card.id}) ${card?.flavorText}`}
+                  loading="lazy"
                   style={{
                     borderRadius: 8,
                   }}
@@ -99,22 +95,17 @@ const BonesCollectionPage: NextPage<BonesCollectionPageProps> = ({
   );
 };
 
-export default BonesCollectionPage;
+export default Home;
 
-export async function getServerSideProps() {
-  const bonesCollection: PokemonTCG.Card[] =
-    await PokemonTCG.findCardsByQueries({
-      q: "nationalPokedexNumbers:[104 TO 105]",
+export async function getStaticProps() {
+  const cardCollection: PokemonTCG.Card[] = await PokemonTCG.findCardsByQueries(
+    {
+      q: "nationalPokedexNumbers:[1 TO 251] subtype:EX",
       orderBy: "-set.releaseDate, hp, -number",
-    });
-
-  // const bonesCollection = await fetch(
-  //   "https://api.pokemontcg.io/v2/cards?q=nationalPokedexNumbers:[104 TO 105]"
-  // ).then((res) => res.json());
-
-  //   console.log(bonesCollection);
+    }
+  );
 
   return {
-    props: { bonesCollection },
+    props: { cardCollection },
   };
 }

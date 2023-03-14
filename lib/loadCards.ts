@@ -4,23 +4,26 @@ export async function loadCards(
   startPokemon: number,
   totalPokemons: number
 ): Promise<PokemonTCG.Card[]> {
-  // const totalPokemons: number = 7;
-  const generalFilter: string =
-    "(-subtypes:EX AND -subtypes:V AND -subtypes:GX AND -subtypes:MEGA AND -subtypes:VMAX AND -subtypes:Baby AND -subtypes:Restored) -set.id:ru1";
-
   const subtypes = [
     "EX",
     "V",
     "GX",
     "MEGA",
     "VMAX",
-    "Rapid Strike",
-    "Single Strike",
+    "Rapid",
+    "Single",
     "Baby",
     "Restored",
-    "TAG TEAM",
+    "TAG",
   ];
+
   const regions = ["alola*", "dark*", "galar*", "hisui*", "paldea*"];
+
+  const generalFilter: string = `(-subtypes:${subtypes
+    .map((subtype) => `${subtype}`)
+    .join(" AND -subtypes:")})
+    (-name:${regions.map((region) => `${region}`).join(" AND -name:")})
+    -set.id:ru1`;
 
   const paramsArray: PokemonTCG.Parameter[] = [];
 
@@ -38,7 +41,7 @@ export async function loadCards(
   for (let subtype of subtypes) {
     for (let i = startPokemon; i <= totalPokemons; i++) {
       const params: PokemonTCG.Parameter = {
-        q: `nationalPokedexNumbers:${i} ${generalFilter} subtypes:${subtype}`,
+        q: `nationalPokedexNumbers:${i}  subtypes:${subtype}`,
         pageSize: 1,
         orderBy:
           "-tcgplayer.prices.normal.high, -tcgplayer.prices.holofoil.high",
@@ -50,7 +53,7 @@ export async function loadCards(
   for (let region of regions) {
     for (let i = startPokemon; i <= totalPokemons; i++) {
       const params: PokemonTCG.Parameter = {
-        q: `nationalPokedexNumbers:${i} ${generalFilter} name:${region}`,
+        q: `nationalPokedexNumbers:${i}  name:${region}`,
         pageSize: 1,
         orderBy: "-tcgplayer.prices.high",
       };
