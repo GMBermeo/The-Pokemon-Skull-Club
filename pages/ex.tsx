@@ -104,8 +104,8 @@ export default Home;
 export async function getStaticProps() {
   const cardCollection: PokemonTCG.Card[] = await PokemonTCG.findCardsByQueries(
     {
-      q: "nationalPokedexNumbers:[1 TO 151] subtypes:EX",
-      orderBy: "-set.releaseDate, hp, -number",
+      q: "nationalPokedexNumbers:[1 TO 151] subtypes:EX hp:[200 TO *]",
+      orderBy: "nationalPokedexNumbers, -hp, -set.releaseDate, -number",
     }
   );
 

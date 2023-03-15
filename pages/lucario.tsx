@@ -5,7 +5,6 @@ import Masonry from "@mui/lab/Masonry";
 
 import { styled } from "@mui/material/styles";
 import { Stack, Typography, Paper } from "@mui/material";
-import axios from "axios";
 import { loadCards } from "../lib/loadCards";
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -54,7 +53,10 @@ const Home: NextPage<HomeProps> = ({ cardCollection }) => {
         Total: {cardCollection.length} cards |{" "}
         {Math.ceil(cardCollection.length / 9)} pages
         {/* {cardCollection.id} */}
-        <Masonry columns={{ xs: 2, sm: 3, md: 4, lg: 5, xl: 6 }} spacing={1}>
+        <Masonry
+          columns={{ xs: 2, sm: 3, md: 4, lg: 5, xl: 6 }}
+          // spacing={{ xs: 1, md: 2, xl: 3 }}
+        >
           {cardCollection.map((card, index) => (
             <Stack key={index}>
               <Typography color={"white"} fontSize={14} fontWeight={1}>
@@ -99,10 +101,10 @@ const Home: NextPage<HomeProps> = ({ cardCollection }) => {
 
 export default Home;
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   const cardCollection: PokemonTCG.Card[] = await PokemonTCG.findCardsByQueries(
     {
-      q: "nationalPokedexNumbers:25 supertype:pokemon (-set.id:mcd*)",
+      q: "nationalPokedexNumbers:448",
       orderBy: "-set.releaseDate, -hp, -number",
     }
   );
