@@ -5,7 +5,7 @@ import Masonry from "@mui/lab/Masonry";
 
 import { styled } from "@mui/material/styles";
 import { Stack, Typography, Paper } from "@mui/material";
-import { loadCards } from "../lib/loadCards";
+import { loadCards } from "../lib/loadCardsOriginal";
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
@@ -102,9 +102,19 @@ const Home: NextPage<HomeProps> = ({ cardCollection }) => {
 export default Home;
 
 export async function getStaticProps() {
+  const crossgen: number[] = [
+    172, 173, 174, 182, 979, 186, 199, 462, 208, 236, 237, 463, 464, 440, 242,
+    465, 230, 439, 866, 212, 900, 238, 239, 466, 240, 467, 196, 197, 470, 471,
+    700, 233, 474, 446,
+  ];
+
+  const crossgenQuery = crossgen
+    .map((num) => `OR nationalPokedexNumbers:${num}`)
+    .join(" ");
+
   const cardCollection: PokemonTCG.Card[] = await PokemonTCG.findCardsByQueries(
     {
-      q: "nationalPokedexNumbers:[1 TO 151] subtypes:EX hp:[200 TO *]",
+      q: `(nationalPokedexNumbers:[1 TO 151] ${crossgenQuery}) subtypes:EX hp:[200 TO *]`,
       orderBy: "nationalPokedexNumbers, -hp, -set.releaseDate, -number",
     }
   );

@@ -4,14 +4,7 @@ export async function loadCards(
   startPokemon: number,
   finalPokemon?: number
 ): Promise<PokemonTCG.Card[]> {
-  const subtypes = [
-    "EX OR -subtypes:V OR -subtypes:GX",
-    // "V",
-    // "GX",
-    "MEGA",
-    "VMAX",
-    "TAG",
-  ];
+  const subtypes = ["EX hp:[200 TO *]", "V", "GX", "MEGA", "VMAX", "TAG"];
   const totalPokemons = finalPokemon ?? startPokemon;
 
   const regions = ["alola*", "galar*", "hisui*", "paldea*"];

@@ -170,6 +170,13 @@ export async function getStaticProps() {
     ...munchlax,
   ];
 
+  cardCollection.sort(
+    (a, b) =>
+      a.nationalPokedexNumbers![0] - b.nationalPokedexNumbers![0] ||
+      a.hp?.localeCompare(b.hp!) ||
+      b.set.releaseDate.localeCompare(a.set.releaseDate)
+  );
+
   return {
     props: { cardCollection },
   };
