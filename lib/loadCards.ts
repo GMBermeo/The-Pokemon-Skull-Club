@@ -2,35 +2,31 @@ import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
 
 export async function loadCards(
   startPokemon: number,
-  totalPokemons: number
+  finalPokemon?: number
 ): Promise<PokemonTCG.Card[]> {
   const subtypes = [
-    "EX",
-    "V",
-    "GX",
+    "EX OR -subtypes:V OR -subtypes:GX",
+    // "V",
+    // "GX",
     "MEGA",
     "VMAX",
-    "Rapid",
-    "Single",
-    "Baby",
-    "Restored",
     "TAG",
   ];
+  const totalPokemons = finalPokemon ?? startPokemon;
 
   const regions = ["alola*", "galar*", "hisui*", "paldea*"];
 
   const generalFilter: string = `(-subtypes:${subtypes
     .map((subtype) => `${subtype}`)
     .join(" AND -subtypes:")})
-    (-name:${regions.map((region) => `${region}`).join(" AND -name:")})
-    -set.id:ru*`;
+    (-name:${regions.map((region) => `${region}`).join(" AND -name:")})`;
 
   const paramsArray: PokemonTCG.Parameter[] = [];
 
   // Add the parameters for the first query
   for (let i = startPokemon; i <= totalPokemons; i++) {
     const params: PokemonTCG.Parameter = {
-      q: `nationalPokedexNumbers:${i} ${generalFilter} -set.id:mcd*`,
+      q: `nationalPokedexNumbers:${i} ${generalFilter} (-set.id:mcd* AND -set.id:ecard* AND -set.id:ru*)`,
       pageSize: 1,
       orderBy: "-tcgplayer.prices.normal.high, -tcgplayer.prices.holofoil.high",
     };
