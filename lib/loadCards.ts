@@ -4,47 +4,60 @@ export async function loadCards(
   startPokemon: number,
   finalPokemon?: number
 ): Promise<PokemonTCG.Card[]> {
-  const subtypes = ["EX hp:[200 TO *]", "V", "GX", "MEGA", "VMAX", "TAG"];
-  const totalPokemons = finalPokemon ?? startPokemon;
-
+  const subtypes = [
+    "EX hp:[200 TO *]",
+    "V",
+    "GX",
+    "MEGA",
+    "VMAX",
+    "TAG",
+    // "Basic",
+  ];
   const regions = ["alola*", "galar*", "hisui*", "paldea*"];
 
-  const generalFilter: string = `(-subtypes:${subtypes
-    .map((subtype) => `${subtype}`)
-    .join(" AND -subtypes:")})
-    (-name:${regions.map((region) => `${region}`).join(" AND -name:")})`;
+  const totalPokemons = finalPokemon ?? startPokemon;
+
+  // const conflictFilter: string = `(-subtypes:${subtypes
+  //   .map((subtype) => `${subtype}`)
+  //   .join(" AND -subtypes:")})
+  //   (-name:${regions.map((region) => `${region}`).join(" AND -name:")})`;
+
+  const generalFilter: string =
+    "-set.id:ru* -set.id:mcd* -set.id:ecard* -rarity:*rainbow* -subtypes:BREAK";
 
   const paramsArray: PokemonTCG.Parameter[] = [];
 
   // Add the parameters for the first query
   for (let i = startPokemon; i <= totalPokemons; i++) {
     const params: PokemonTCG.Parameter = {
-      q: `nationalPokedexNumbers:${i} ${generalFilter} (-set.id:mcd* AND -set.id:ecard* AND -set.id:ru*)`,
+      q: `nationalPokedexNumbers:${i} ${generalFilter}`,
       pageSize: 1,
-      orderBy: "-tcgplayer.prices.normal.high, -tcgplayer.prices.holofoil.high",
+      orderBy:
+        "rarity, -tcgplayer.prices.normal.high, -tcgplayer.prices.holofoil.high",
     };
     paramsArray.push(params);
   }
 
-  // Add the parameters for the remaining queries
+  // Add the parameters for subtypes
   for (let subtype of subtypes) {
     for (let i = startPokemon; i <= totalPokemons; i++) {
       const params: PokemonTCG.Parameter = {
-        q: `nationalPokedexNumbers:${i} subtypes:${subtype} -set.id:mcd*`,
+        q: `nationalPokedexNumbers:${i} ${generalFilter} subtypes:${subtype}`,
         pageSize: 1,
         orderBy:
-          "-tcgplayer.prices.normal.high, -tcgplayer.prices.holofoil.high",
+          "rarity, -tcgplayer.prices.normal.high, -tcgplayer.prices.holofoil.high",
       };
       paramsArray.push(params);
     }
   }
 
+  // Add the parameters for regions
   for (let region of regions) {
     for (let i = startPokemon; i <= totalPokemons; i++) {
       const params: PokemonTCG.Parameter = {
-        q: `nationalPokedexNumbers:${i} name:${region} -set.id:mcd*`,
+        q: `nationalPokedexNumbers:${i} ${generalFilter} name:${region}`,
         pageSize: 1,
-        orderBy: "-tcgplayer.prices.high",
+        orderBy: "rarity, -tcgplayer.prices.high",
       };
       paramsArray.push(params);
     }
@@ -69,8 +82,10 @@ export async function loadCards(
     (a, b) =>
       a.nationalPokedexNumbers![0] - b.nationalPokedexNumbers![0] ||
       a.hp?.localeCompare(b.hp!) ||
-      b.set.releaseDate.localeCompare(a.set.releaseDate)
+      a.set.releaseDate.localeCompare(b.set.releaseDate)
   );
+
+  console.log(`Params:${paramsArray.length}, Cards:${cardCollection.length}`);
 
   return cardCollection;
 }

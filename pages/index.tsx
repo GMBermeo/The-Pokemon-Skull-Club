@@ -51,7 +51,7 @@ const Home: NextPage<HomeProps> = ({ cardCollection }) => {
         <div key={card.id}> {card.name}</div>
       ))}{" "} */}
         Total: {cardCollection.length} cards |{" "}
-        {Math.ceil(cardCollection.length / 9)} pages
+        {Math.ceil(cardCollection.length / 9) + 3} pages
         {/* {cardCollection.id} */}
         <Masonry
           columns={{ xs: 2, sm: 3, md: 4, lg: 5, xl: 6 }}
@@ -61,7 +61,7 @@ const Home: NextPage<HomeProps> = ({ cardCollection }) => {
             <Stack key={index}>
               <Typography color={"white"} fontSize={14} fontWeight={1}>
                 #{card?.nationalPokedexNumbers![0]} (index: {index + 1}) page:
-                {Math.ceil(index / 9)}
+                {Math.ceil(index / 9) + 3}
               </Typography>
 
               <Typography color={"white"} fontSize={10}>
@@ -102,8 +102,75 @@ const Home: NextPage<HomeProps> = ({ cardCollection }) => {
 export default Home;
 
 export async function getStaticProps() {
-  const cardCollection = await loadCards(1, 151);
-  // const cardCollection: PokemonTCG.Card[] = [];
+  const cardCollectionBase = await loadCards(1, 151);
+  const cleffaIgglybuff = await loadCards(173, 174);
+  const crobat = await loadCards(169);
+  const bellossom = await loadCards(182);
+  const annihilape = await loadCards(979);
+  const politoed = await loadCards(186);
+  const slowking = await loadCards(199);
+  const magnezone = await loadCards(462);
+  const steelix = await loadCards(208);
+  const tyrogue = await loadCards(236);
+  const hitmontop = await loadCards(237);
+  const lickilicky = await loadCards(463);
+  const rhyperior = await loadCards(464);
+  const happiny = await loadCards(440);
+  const blissey = await loadCards(242);
+  const tangrowth = await loadCards(465);
+  const kingdra = await loadCards(230);
+  const mimeJr = await loadCards(439);
+  const mrRime = await loadCards(866);
+  const scizor = await loadCards(212);
+  const kleavor = await loadCards(900);
+  const smoochum = await loadCards(238);
+  const elekid = await loadCards(239);
+  const electivire = await loadCards(466);
+  const magby = await loadCards(240);
+  const magmortar = await loadCards(467);
+  const espeonUmbreon = await loadCards(196, 197);
+  const leafeonGlaceon = await loadCards(470, 471);
+  const sylveon = await loadCards(700);
+  const porygon2 = await loadCards(233);
+  const porygonZ = await loadCards(474);
+  const munchlax = await loadCards(446);
+  const perrserker = await loadCards(863);
+
+  const cardCollection: PokemonTCG.Card[] = [
+    ...cardCollectionBase,
+    ...cleffaIgglybuff,
+    ...crobat,
+    ...bellossom,
+    ...annihilape,
+    ...politoed,
+    ...slowking,
+    ...magnezone,
+    ...steelix,
+    ...tyrogue,
+    ...hitmontop,
+    ...lickilicky,
+    ...rhyperior,
+    ...happiny,
+    ...blissey,
+    ...tangrowth,
+    ...kingdra,
+    ...mimeJr,
+    ...mrRime,
+    ...scizor,
+    ...kleavor,
+    ...smoochum,
+    ...elekid,
+    ...electivire,
+    ...magby,
+    ...magmortar,
+    ...espeonUmbreon,
+    ...leafeonGlaceon,
+    ...sylveon,
+    ...porygon2,
+    ...porygonZ,
+    ...munchlax,
+    ...perrserker,
+  ];
 
   return {
     props: { cardCollection },

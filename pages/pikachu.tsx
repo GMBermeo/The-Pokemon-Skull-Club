@@ -5,8 +5,6 @@ import Masonry from "@mui/lab/Masonry";
 
 import { styled } from "@mui/material/styles";
 import { Stack, Typography, Paper } from "@mui/material";
-import axios from "axios";
-import { loadCards } from "../lib/loadCards";
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,

@@ -5,6 +5,7 @@ import Masonry from "@mui/lab/Masonry";
 
 import { styled } from "@mui/material/styles";
 import { Stack, Typography, Paper } from "@mui/material";
+import { loadCards } from "../lib/loadCards";
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
@@ -104,10 +105,11 @@ export default BonesCollectionPage;
 export async function getServerSideProps() {
   const bonesCollection: PokemonTCG.Card[] =
     await PokemonTCG.findCardsByQueries({
-      q: "nationalPokedexNumbers:[104 TO 105]",
-      orderBy: "-set.releaseDate, hp, -number",
+      q: "nationalPokedexNumbers:[104 TO 105] -set.id:mcd*",
+      orderBy: "-nationalPokedexNumbers, -hp, -set.releaseDate, -number",
     });
 
+  // const bonesCollection = await loadCards(104, 105);
   // const bonesCollection = await fetch(
   //   "https://api.pokemontcg.io/v2/cards?q=nationalPokedexNumbers:[104 TO 105]"
   // ).then((res) => res.json());
