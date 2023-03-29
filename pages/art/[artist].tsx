@@ -1,10 +1,16 @@
 import Head from "next/head";
-import type { NextPage } from "next";
+import type {
+  GetServerSideProps,
+  GetStaticPaths,
+  GetStaticProps,
+  NextPage,
+} from "next";
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
 import Masonry from "@mui/lab/Masonry";
 
 import { styled } from "@mui/material/styles";
 import { Stack, Typography, Paper } from "@mui/material";
+import { ParsedUrlQuery } from "querystring";
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
@@ -15,12 +21,12 @@ const Item = styled(Paper)(({ theme }) => ({
   justifyContent: "center",
 }));
 
-type KawayooCollectionPageProps = {
-  kawayooCollection: PokemonTCG.Card[];
+type ArtistCollectionPageProps = {
+  artistCollection: PokemonTCG.Card[];
 };
 
-const KawayooCollectionPage: NextPage<KawayooCollectionPageProps> = ({
-  kawayooCollection,
+const ArtistCollectionPage: NextPage<ArtistCollectionPageProps> = ({
+  artistCollection,
 }) => {
   return (
     <>
@@ -51,14 +57,14 @@ const KawayooCollectionPage: NextPage<KawayooCollectionPageProps> = ({
         {/* {cubones.map((card: Card) => (
         <div key={card.id}> {card.name}</div>
       ))}{" "} */}
-        Total: {kawayooCollection.length} cards |{" "}
-        {Math.ceil(kawayooCollection.length / 9)} pages
-        {/* {kawayooCollection.id} */}
+        Total: {artistCollection.length} cards |{" "}
+        {Math.ceil(artistCollection.length / 9)} pages
+        {/* {artistCollection.id} */}
         <Masonry
           columns={{ xs: 2, sm: 3, md: 4, lg: 5, xl: 6 }}
           // spacing={{ xs: 1, md: 2, xl: 3 }}
         >
-          {kawayooCollection.map((card, index) => (
+          {artistCollection.map((card, index) => (
             <Stack key={index}>
               <Typography color={"white"} fontSize={14} fontWeight={1}>
                 #{card?.nationalPokedexNumbers![0]} (index: {index + 1}) page:
@@ -99,23 +105,58 @@ const KawayooCollectionPage: NextPage<KawayooCollectionPageProps> = ({
   );
 };
 
-export default KawayooCollectionPage;
+export default ArtistCollectionPage;
 
-export async function getServerSideProps() {
-  const kawayooCollection: PokemonTCG.Card[] =
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const { artist } = params!;
+  const artistCollection: PokemonTCG.Card[] =
     await PokemonTCG.findCardsByQueries({
-      q: "artist:Hasuno",
-      orderBy: "nationalPokedexNumbers, -hp, -set.releaseDate, -number",
+      q: `artist:*${artist}* nationalPokedexNumbers:[1 TO 151] -subtypes:V-UNION supertype:POKEMON`,
+      orderBy: " -set.releaseDate, nationalPokedexNumbers, -hp, -number",
     });
 
-  // const kawayooCollection = await loadCards(104, 105);
-  // const kawayooCollection = await fetch(
+  // const artistCollection = await loadCards(104, 105);
+  // const artistCollection = await fetch(
   //   "https://api.pokemontcg.io/v2/cards?q=nationalPokedexNumbers:[104 TO 105]"
   // ).then((res) => res.json());
 
-  //   console.log(kawayooCollection);
+  //   console.log(artistCollection);
 
   return {
-    props: { kawayooCollection },
+    props: { artistCollection },
   };
+};
+
+interface Params extends ParsedUrlQuery {
+  artist: string;
 }
+
+export interface PathParams {
+  params: { artist: string };
+}
+
+export const getStaticPaths: GetStaticPaths<Params> = async () => {
+  const paths: PathParams[] = [
+    { params: { artist: "hasuno" } },
+    { params: { artist: "kawayoo" } },
+    { params: { artist: "arita" } },
+    { params: { artist: "morii" } },
+    { params: { artist: "komiya" } },
+    { params: { artist: "tokiya" } },
+    { params: { artist: "sowsow" } },
+    { params: { artist: "naoki" } },
+    { params: { artist: "kagemaru" } },
+    { params: { artist: "kusube" } },
+    { params: { artist: "ariga" } },
+    { params: { artist: "asako" } },
+    { params: { artist: "nishida" } },
+    { params: { artist: "kudo" } },
+    { params: { artist: "adachi" } },
+    { params: { artist: "egawa" } },
+  ];
+  // const postList: PostData[] = await GetPosts()
+  return {
+    paths: paths,
+    fallback: true,
+  };
+};

@@ -23,7 +23,7 @@ export async function loadCards(
   //   (-name:${regions.map((region) => `${region}`).join(" AND -name:")})`;
 
   const generalFilter: string =
-    "-set.id:ru* -set.id:mcd* -set.id:ecard* -rarity:*rainbow* -subtypes:BREAK";
+    "-set.id:ru* -set.id:mcd* -set.id:ecard* -rarity:*rainbow* -subtypes:BREAK -subtypes:V-UNION";
 
   const paramsArray: PokemonTCG.Parameter[] = [];
 
