@@ -1,16 +1,12 @@
 import Head from "next/head";
-import type {
-  GetServerSideProps,
-  GetStaticPaths,
-  GetStaticProps,
-  NextPage,
-} from "next";
+import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
 import Masonry from "@mui/lab/Masonry";
 
 import { styled } from "@mui/material/styles";
 import { Stack, Typography, Paper } from "@mui/material";
 import { ParsedUrlQuery } from "querystring";
+import { useRouter } from "next/router";
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
@@ -28,6 +24,12 @@ type ArtistCollectionPageProps = {
 const ArtistCollectionPage: NextPage<ArtistCollectionPageProps> = ({
   artistCollection,
 }) => {
+  const router = useRouter();
+
+  if (router.isFallback) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
       <Head>
@@ -37,7 +39,7 @@ const ArtistCollectionPage: NextPage<ArtistCollectionPageProps> = ({
           content="'If you're starving, eat your horses, your dead, or yourself—but NEVER eat your dog.' —General Jarkeld, the Arctic Fox. 🐾 This tool was developed using the Static Site Generation (SSG) concept with Next.js in order to index all the dog type cards of the Magic The Gathering for a private collection. 🐶 The source code can be found on github and easily changed to any other parameter."
         />
         {/* 
-        <meta property="og:title" content="The Lands of Magic the Gathering" />
+        <meta property="og:title" content="Pokemon TCG" />
         <meta
           property="og:description"
           content="'If you're starving, eat your horses, your dead, or yourself—but NEVER eat your dog.' —General Jarkeld, the Arctic Fox. 🐾 This tool was developed using the Static Site Generation (SSG) concept with Next.js in order to index all the dog type cards of the Magic The Gathering for a private collection. 🐶 The source code can be found on github and easily changed to any other parameter."
@@ -57,14 +59,14 @@ const ArtistCollectionPage: NextPage<ArtistCollectionPageProps> = ({
         {/* {cubones.map((card: Card) => (
         <div key={card.id}> {card.name}</div>
       ))}{" "} */}
-        Total: {artistCollection.length} cards |{" "}
-        {Math.ceil(artistCollection.length / 9)} pages
+        Total: {artistCollection?.length} cards |{" "}
+        {Math.ceil(artistCollection?.length / 9)} pages
         {/* {artistCollection.id} */}
         <Masonry
           columns={{ xs: 2, sm: 3, md: 4, lg: 5, xl: 6 }}
           // spacing={{ xs: 1, md: 2, xl: 3 }}
         >
-          {artistCollection.map((card, index) => (
+          {artistCollection?.map((card, index) => (
             <Stack key={index}>
               <Typography color={"white"} fontSize={14} fontWeight={1}>
                 #{card?.nationalPokedexNumbers![0]} (index: {index + 1}) page:
@@ -112,7 +114,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const artistCollection: PokemonTCG.Card[] =
     await PokemonTCG.findCardsByQueries({
       q: `artist:*${artist}* nationalPokedexNumbers:[1 TO 151] -subtypes:V-UNION supertype:POKEMON`,
-      orderBy: " -set.releaseDate, nationalPokedexNumbers, -hp, -number",
+      orderBy: " -set.releaseDate, -hp, nationalPokedexNumbers, -number",
     });
 
   // const artistCollection = await loadCards(104, 105);
@@ -157,6 +159,6 @@ export const getStaticPaths: GetStaticPaths<Params> = async () => {
   // const postList: PostData[] = await GetPosts()
   return {
     paths: paths,
-    fallback: true,
+    fallback: "blocking",
   };
 };

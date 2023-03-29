@@ -31,7 +31,7 @@ const Home: NextPage<HomeProps> = ({ cardCollection }) => {
           content="'If you're starving, eat your horses, your dead, or yourself—but NEVER eat your dog.' —General Jarkeld, the Arctic Fox. 🐾 This tool was developed using the Static Site Generation (SSG) concept with Next.js in order to index all the dog type cards of the Magic The Gathering for a private collection. 🐶 The source code can be found on github and easily changed to any other parameter."
         />
 
-        <meta property="og:title" content="The Lands of Magic the Gathering" />
+        <meta property="og:title" content="Pokemon TCG" />
         <meta
           property="og:description"
           content="'If you're starving, eat your horses, your dead, or yourself—but NEVER eat your dog.' —General Jarkeld, the Arctic Fox. 🐾 This tool was developed using the Static Site Generation (SSG) concept with Next.js in order to index all the dog type cards of the Magic The Gathering for a private collection. 🐶 The source code can be found on github and easily changed to any other parameter."
@@ -44,7 +44,7 @@ const Home: NextPage<HomeProps> = ({ cardCollection }) => {
         />
         <meta property="og:image:width" content="3000" />
         <meta property="og:image:height" content="3000" />
-        <meta property="og:url" content="https://lands-of-mtg.bermeo.dev/" />
+        <meta property="og:url" content="https://pokemon-tcg.bermeo.dev/" />
         <meta property="og:locale" content="en_US" />
       </Head>
       <div>
