@@ -39,7 +39,7 @@ const ArtistsPage: NextPage<ArtistPageProps> = ({ artists }) => {
             <Link key={artist} href={`/art/${artist}`} passHref>
               <ListItem
                 sx={{
-                  border: 1,
+                  border: 0.5,
                   borderColor: "#fff",
                   borderRadius: 1,
                   marginBottom: 1,

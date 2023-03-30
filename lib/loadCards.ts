@@ -1,5 +1,14 @@
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
 
+export function sleep(): Promise<void> {
+  if (!process.env.IS_BUILD) {
+    return Promise.resolve();
+  }
+  const ms = Math.floor(123.5 * (Math.random() + 2));
+  console.log(`😴Building: ${ms}ms💤`);
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export async function loadCards(
   startPokemon: number,
   finalPokemon?: number
@@ -23,7 +32,7 @@ export async function loadCards(
   //   (-name:${regions.map((region) => `${region}`).join(" AND -name:")})`;
 
   const generalFilter: string =
-    "-set.id:ru* -set.id:mcd* -set.id:ecard* -rarity:*rainbow* -subtypes:BREAK -subtypes:V-UNION";
+    "-set.id:ru* -set.id:mcd* -set.id:ecard* -rarity:*rainbow* (-subtypes:BREAK AND -subtypes:V-UNIO)";
 
   const paramsArray: PokemonTCG.Parameter[] = [];
 
@@ -74,6 +83,7 @@ export async function loadCards(
       // Check if the card ID is already in the Set
       cardCollection.push(card);
       cardIds.add(card.id); // Add the card ID to the Set
+      sleep();
     }
   }
 
@@ -84,8 +94,6 @@ export async function loadCards(
       a.hp?.localeCompare(b.hp!) ||
       a.set.releaseDate.localeCompare(b.set.releaseDate)
   );
-
-  console.log(`Params:${paramsArray.length}, Cards:${cardCollection.length}`);
 
   return cardCollection;
 }
