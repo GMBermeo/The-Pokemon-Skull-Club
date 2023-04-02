@@ -9,6 +9,9 @@ export function sleep(): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+export const generalFilter: string =
+  "-set.id:ru* -set.id:mcd* -set.id:ecard* -rarity:*rainbow* (-subtypes:BREAK AND -subtypes:*UNION*)";
+
 export async function loadCards(
   startPokemon: number,
   finalPokemon?: number
@@ -30,9 +33,6 @@ export async function loadCards(
   //   .map((subtype) => `${subtype}`)
   //   .join(" AND -subtypes:")})
   //   (-name:${regions.map((region) => `${region}`).join(" AND -name:")})`;
-
-  const generalFilter: string =
-    "-set.id:ru* -set.id:mcd* -set.id:ecard* -rarity:*rainbow* (-subtypes:BREAK AND -subtypes:V-UNIO)";
 
   const paramsArray: PokemonTCG.Parameter[] = [];
 

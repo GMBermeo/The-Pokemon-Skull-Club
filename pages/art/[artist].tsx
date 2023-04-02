@@ -7,6 +7,7 @@ import { styled } from "@mui/material/styles";
 import { Stack, Typography, Paper } from "@mui/material";
 import { ParsedUrlQuery } from "querystring";
 import { useRouter } from "next/router";
+import { generalFilter } from "../../lib/loadCards";
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
@@ -113,7 +114,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { artist } = params!;
   const artistCollection: PokemonTCG.Card[] =
     await PokemonTCG.findCardsByQueries({
-      q: `artist:*${artist}* nationalPokedexNumbers:[1 TO 151] -subtypes:V-UNION supertype:POKEMON`,
+      q: `artist:*${artist}* nationalPokedexNumbers:[1 TO 151] supertype:POKEMON ${generalFilter}`,
       orderBy: " -set.releaseDate, -hp, nationalPokedexNumbers, -number",
     });
 
