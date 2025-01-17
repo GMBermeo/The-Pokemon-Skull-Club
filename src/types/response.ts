@@ -129,17 +129,17 @@ export interface Tcgplayer {
   prices: Prices;
 }
 
-export interface Prices {
-  normal?: The1_StEdition;
-  reverseHolofoil?: The1_StEdition;
-  "1stEdition"?: The1_StEdition;
-  unlimited?: The1_StEdition;
-}
-
-export interface The1_StEdition {
+export interface FirstStEdition {
   low: number;
   mid: number;
   high: number;
   market: number;
-  directLow: number | null;
+  directLow?: number;
+}
+
+export interface Prices {
+  normal?: FirstStEdition;
+  reverseHolofoil?: FirstStEdition;
+  "1stEdition"?: FirstStEdition;
+  unlimited?: FirstStEdition;
 }
