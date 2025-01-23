@@ -1,60 +1,85 @@
-import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
+"use server";
 import { Metadata } from "next";
+import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
+import { CardGrid } from "@components";
+import { baseMetadata, retryWithBackoff } from "@/lib";
 
-export const metadata: Metadata = {
-  title: "Bones Collection",
+const metadata: Metadata = {
+  ...baseMetadata,
+  title: "Bone Club - Cubones & Marowaks",
   description:
-    "'If you're starving, eat your horses, your dead, or yourself—but NEVER eat your dog.' —General Jarkeld, the Arctic Fox...",
+    "'It has been seen pounding boulders with the bone it carries in order to tap out messages to others.' 🦴 This tool was developed using the SSG with Next.js 15 in order to index all the cubone and marowak cards from Pokémon TCG for a private collection. 🦴 The source code can be found on github and easily changed to any other parameter.",
+  keywords: [
+    "pokemon",
+    "tcg",
+    "cubone",
+    "marowak",
+    "bones",
+    "pokemon tcg",
+    "boneclub",
+  ],
   openGraph: {
-    url: "https://pokemon-tcg.bermeo.dev/",
+    title: "Bone Club - Cubones & Marowaks",
+    description:
+      "'It has been seen pounding boulders with the bone it carries in order to tap out messages to others.' 🦴 This tool was developed using the SSG with Next.js 15 in order to index all the cubone and marowak cards from Pokémon TCG for a private collection. 🦴 The source code can be found on github and easily changed to any other parameter.",
+    url: "https://pokemon.bermeo.dev/bones",
+    section: "Bone Club",
     locale: "en_US",
+    images: [
+      {
+        url: "https://pokemon.bermeo.dev/bones/boneclub1.jpg",
+        width: 366,
+        height: 366,
+      },
+      {
+        url: "https://pokemon.bermeo.dev/bones/boneclub2.jpg",
+        width: 325,
+        height: 403,
+      },
+      {
+        url: "https://pokemon.bermeo.dev/bones/marowak.png",
+        width: 250,
+        height: 250,
+      },
+    ],
   },
 };
 
-async function getBonesCollection() {
-  return await PokemonTCG.findCardsByQueries({
-    q: "nationalPokedexNumbers:[104 TO 105] -set.id:mcd*",
-    orderBy: "-nationalPokedexNumbers, -hp, -set.releaseDate, -number",
-  });
+export async function generateMetadata(): Promise<Metadata> {
+  return metadata;
 }
 
-export default async function BonesCollectionPage() {
-  const bonesCollection = await getBonesCollection();
+async function getData() {
+  try {
+    const response = await retryWithBackoff(() =>
+      PokemonTCG.findCardsByQueries({
+        q: "nationalPokedexNumbers:[104 TO 105] -set.id:mcd*",
+        orderBy: "-set.releaseDate",
+      })
+    );
+
+    return response;
+  } catch (error) {
+    console.error("Error fetching Pokemon cards:", error);
+    return [];
+  }
+}
+
+export default async function BoneClubPage() {
+  const cards = await getData();
 
   return (
-    <div>
-      <div>
-        Total: {bonesCollection.length} cards |{" "}
-        {Math.ceil(bonesCollection.length / 9)} pages
+    <div className="flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-800 text-slate-950 dark:text-white px-4 py-2">
+      <div className="font-bold space-y-2 mb-4 justify-between flex w-full">
+        <div>
+          <h1 className="text-4xl">Bone Club</h1>
+          <h2 className="text-xl">Cubones & Marowaks</h2>
+        </div>
+        <h3 className="text-lg">
+          {cards.length} cards | {Math.ceil(cards.length / 4)} pages.
+        </h3>
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-        {bonesCollection.map((card, index) => (
-          <div key={index}>
-            <div className="text-white text-sm font-bold">
-              #{card?.nationalPokedexNumbers![0]} (index: {index + 1}) page:
-              {Math.ceil(index / 9)}
-            </div>
-
-            <div className="text-white text-xs">
-              $ {card.tcgplayer?.prices.normal?.high} / ${" "}
-              {card.tcgplayer?.prices.normal?.market} / ${" "}
-              {card.tcgplayer?.prices.holofoil?.high} / ${" "}
-              {card.tcgplayer?.prices.holofoil?.market}
-            </div>
-            <a
-              href={card.images.large}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img
-                src={card.images.small}
-                alt={`${card.name} (${card.id}) ${card?.flavorText}`}
-                className="rounded-lg"
-              />
-            </a>
-          </div>
-        ))}
-      </div>
+      <CardGrid cardCollection={cards} />
     </div>
   );
 }

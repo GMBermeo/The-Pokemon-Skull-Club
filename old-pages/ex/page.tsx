@@ -14,8 +14,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: "https://lands-of-mtg.bermeo.dev/icons/favicon-3000x3000.png",
-        width: 3000,
-        height: 3000,
+        width: 3001,
+        height: 3001,
       },
     ],
   },

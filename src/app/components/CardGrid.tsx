@@ -7,19 +7,28 @@ type CardGridProps = {
 
 export function CardGrid({ cardCollection }: Readonly<CardGridProps>) {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 auto-rows-auto">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
       {cardCollection.map((card, index) => (
         <div key={index} className="flex flex-col gap-2">
           <p className="text-white text-sm font-normal">
-            #{card?.nationalPokedexNumbers?.[0]} (index: {index + 1}) page:
-            {Math.ceil(index / 9) + 3}
+            #{card?.nationalPokedexNumbers![0]} (index: {index + 1}) page:
+            {Math.ceil(index / 9)}
           </p>
 
           <p className="text-white text-xs">
-            $ {card.tcgplayer?.prices.normal?.high} / ${" "}
-            {card.tcgplayer?.prices.normal?.market} / ${" "}
-            {card.tcgplayer?.prices.holofoil?.high} / ${" "}
-            {card.tcgplayer?.prices.holofoil?.market}
+            {card.tcgplayer?.prices?.normal?.high &&
+              `h: $${card.tcgplayer.prices.normal.high} / `}
+            {card.tcgplayer?.prices?.normal?.market &&
+              `m: $${card.tcgplayer.prices.normal.market}`}
+            {card.tcgplayer?.prices?.holofoil &&
+              ` / ${
+                card.tcgplayer?.prices.holofoil?.high &&
+                `foil.h: $${card.tcgplayer.prices.holofoil.high} /`
+              }
+            ${
+              card.tcgplayer?.prices.holofoil?.market &&
+              `foil.m: $${card.tcgplayer.prices.holofoil.market}`
+            }`}
           </p>
 
           <a

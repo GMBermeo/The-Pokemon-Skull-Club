@@ -1,12 +1,22 @@
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
 
-export function sleep(): Promise<void> {
-  if (!process.env.IS_BUILD) {
-    return Promise.resolve();
+export async function retryWithBackoff<T>(
+  fn: () => Promise<T>,
+  retries = 3,
+  baseDelay = 1000
+): Promise<T> {
+  try {
+    return await fn();
+  } catch (error: any) {
+    if (retries === 0 || error?.response?.status !== 429) {
+      throw error;
+    }
+    const delay =
+      baseDelay * 100 ** (3 - retries) * (0.9 + Math.random() * 0.2);
+    console.log(`Rate limited. Retrying in ${Math.round(delay)}ms...`);
+
+    return retryWithBackoff(fn, retries - 1, baseDelay);
   }
-  const ms = Math.floor(123.5 * (Math.random() + 2));
-  console.log(`😴Building: ${ms}ms💤`);
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export const generalFilter: string =
@@ -25,9 +35,9 @@ export async function loadCards(
     "TAG",
     // "Basic",
   ];
-  const regions = ["alola*", "galar*", "hisui*", "paldea*"];
+  const regions: string[] = ["alola*", "galar*", "hisui*", "paldea*"];
 
-  const totalPokemons = finalPokemon ?? startPokemon;
+  const totalPokemons: number = finalPokemon ?? startPokemon;
 
   // const conflictFilter: string = `(-subtypes:${subtypes
   //   .map((subtype) => `${subtype}`)
@@ -75,23 +85,28 @@ export async function loadCards(
   const cardCollection: PokemonTCG.Card[] = [];
   const cardIds = new Set<string>(); // Create a Set to track unique card IDs
 
-  // Make the requests with the array of parameters
+  // Update the card fetching loop
   for (let params of paramsArray) {
-    const response = await PokemonTCG.findCardsByQueries(params);
-    const card = response[0];
-    if (card && !cardIds.has(card.id)) {
-      // Check if the card ID is already in the Set
-      cardCollection.push(card);
-      cardIds.add(card.id); // Add the card ID to the Set
-      sleep();
+    try {
+      const response: PokemonTCG.Card[] = await retryWithBackoff(() =>
+        PokemonTCG.findCardsByQueries(params)
+      );
+      const card: PokemonTCG.Card = response[0];
+      if (card && !cardIds.has(card.id)) {
+        cardCollection.push(card);
+        cardIds.add(card.id);
+      }
+    } catch (error) {
+      console.error("Error fetching card:", error);
+      continue; // Skip failed requests after retries
     }
   }
 
   // Sort the cardCollection array by nationalPokedexNumbers[0]
   cardCollection.sort(
     (a, b) =>
-      a.nationalPokedexNumbers![0] - b.nationalPokedexNumbers![0] ||
-      a.hp?.localeCompare(b.hp!) ||
+      (a.nationalPokedexNumbers![0] - b.nationalPokedexNumbers![0] ||
+        a.hp?.localeCompare(b.hp!)) ??
       a.set.releaseDate.localeCompare(b.set.releaseDate)
   );
 
