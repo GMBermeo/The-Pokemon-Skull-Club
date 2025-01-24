@@ -1,7 +1,7 @@
 "use server";
 import { Metadata } from "next";
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
-import { CardGrid } from "@components";
+import { Body, CardGrid, Header } from "@components";
 import { baseMetadata, retryWithBackoff } from "@/lib";
 
 const metadata: Metadata = {
@@ -27,28 +27,10 @@ const metadata: Metadata = {
     locale: "en_US",
     images: [
       {
-        url: "https://pokemon.bermeo.dev/bones/ghost_marowak.jpg",
+        url: "https://pokemon.bermeo.dev/opengraph/ghost_marowak.jpg",
         width: 1280,
         height: 720,
         type: "image/jpeg",
-      },
-      {
-        url: "https://pokemon.bermeo.dev/bones/boneclub1.jpg",
-        width: 366,
-        height: 366,
-        type: "image/jpeg",
-      },
-      {
-        url: "https://pokemon.bermeo.dev/bones/boneclub2.jpg",
-        width: 325,
-        height: 403,
-        type: "image/jpeg",
-      },
-      {
-        url: "https://pokemon.bermeo.dev/bones/marowak.png",
-        width: 250,
-        height: 250,
-        type: "image/png",
       },
     ],
   },
@@ -62,14 +44,14 @@ async function getData() {
   try {
     const response = await retryWithBackoff(() =>
       PokemonTCG.findCardsByQueries({
-        q: "nationalPokedexNumbers:[104 TO 105] -set.id:mcd*",
+        q: "nationalPokedexNumbers:[104 TO 105] -set.id:mcd* -subtypes:V-UNION",
         orderBy: "-set.releaseDate",
       })
     );
 
     return response;
   } catch (error) {
-    console.error("Error fetching Pokemon cards:", error);
+    console.error("Error fetching Pokemon cards at Bones Page:", error);
     return [];
   }
 }
@@ -78,17 +60,13 @@ export default async function BoneClubPage() {
   const cards = await getData();
 
   return (
-    <div className="flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-800 text-slate-950 dark:text-white px-4 py-2">
-      <div className="font-bold space-y-2 mb-4 justify-between sm:flex-col md:flex-row flex w-full">
-        <div>
-          <h1 className="text-4xl">Bone Club</h1>
-          <h2 className="text-xl">Cubones & Marowaks</h2>
-        </div>
-        <h3 className="text-lg">
-          {cards.length} cards | {Math.ceil(cards.length / 4)} pages.
-        </h3>
-      </div>
+    <Body>
+      <Header
+        title={"Bone Club"}
+        subtitle={"Cubones & Marowaks"}
+        totalCards={cards.length}
+      />
       <CardGrid cardCollection={cards} />
-    </div>
+    </Body>
   );
 }

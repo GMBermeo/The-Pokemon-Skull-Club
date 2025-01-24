@@ -1,7 +1,7 @@
 "use server";
 import { Metadata } from "next";
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
-import { CardGrid } from "@components";
+import { Body, CardGrid, Header } from "@components";
 import { baseMetadata, retryWithBackoff } from "@/lib";
 
 const metadata: Metadata = {
@@ -36,14 +36,14 @@ async function getData() {
   try {
     const response = await retryWithBackoff(() =>
       PokemonTCG.findCardsByQueries({
-        q: "nationalPokedexNumbers:6 -set.id:mcd*",
+        q: "nationalPokedexNumbers:6 -set.id:mcd* -subtypes:V-UNION",
         orderBy: "-set.releaseDate",
       })
     );
 
     return response;
   } catch (error) {
-    console.error("Error fetching Pokemon cards:", error);
+    console.error("Error fetching Pokemon cards at Charizard Page:", error);
     return [];
   }
 }
@@ -52,17 +52,14 @@ export default async function CharizardPage() {
   const cards = await getData();
 
   return (
-    <div className="flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-800 text-slate-950 dark:text-white px-4 py-2">
-      <div className="font-bold space-y-2 mb-4 justify-between sm:flex-col md:flex-row flex w-full">
-        <div>
-          <h1 className="text-4xl">Charizard</h1>
-          <h2 className="text-xl">The Flame non-dragon</h2>
-        </div>
-        <h3 className="text-lg">
-          {cards.length} cards | {Math.ceil(cards.length / 4)} pages.
-        </h3>
-      </div>
+    <Body className="bg-red-50 dark:bg-red-950 text-red-950">
+      <Header
+        title={"Charizard"}
+        subtitle={"Flame non-dragon"}
+        totalCards={cards.length}
+        slotsPerPage={9}
+      />
       <CardGrid cardCollection={cards} />
-    </div>
+    </Body>
   );
 }

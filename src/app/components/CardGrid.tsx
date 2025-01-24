@@ -62,7 +62,7 @@ export function CardGrid({
             )}
 
             <a
-              href={card.images.large}
+              href={`/card/${card.id}`}
               target="_blank"
               rel="noopener noreferrer"
               // Removed hover effect since it's now server-side

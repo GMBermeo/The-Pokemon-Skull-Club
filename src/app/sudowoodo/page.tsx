@@ -1,7 +1,7 @@
 "use server";
 import { Metadata } from "next";
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
-import { CardGrid } from "@components";
+import { Body, CardGrid, Header } from "@components";
 import { baseMetadata, retryWithBackoff } from "@/lib";
 
 const metadata: Metadata = {
@@ -26,6 +26,14 @@ const metadata: Metadata = {
     url: "https://pokemon.bermeo.dev/sudowoodo",
     section: "Sudowoodo",
     locale: "en_US",
+    images: [
+      {
+        url: "https://pokemon.bermeo.dev/opengraph/sudowoodo.jpg",
+        width: 334,
+        height: 402,
+        alt: "Sudowoodo Golden Boys",
+      },
+    ],
   },
 };
 
@@ -37,14 +45,14 @@ async function getData() {
   try {
     const sudowoodoResponse = await retryWithBackoff(() =>
       PokemonTCG.findCardsByQueries({
-        q: "nationalPokedexNumbers:185 -set.id:mcd*",
+        q: "nationalPokedexNumbers:185 -set.id:mcd* -subtypes:V-UNION",
         orderBy: "-set.releaseDate",
       })
     );
 
     const bonslyResponse = await retryWithBackoff(() =>
       PokemonTCG.findCardsByQueries({
-        q: "nationalPokedexNumbers:438 -set.id:mcd*",
+        q: "nationalPokedexNumbers:438 -set.id:mcd* -subtypes:V-UNION",
         orderBy: "-set.releaseDate",
       })
     );
@@ -56,7 +64,7 @@ async function getData() {
       );
     });
   } catch (error) {
-    console.error("Error fetching Pokemon cards:", error);
+    console.error("Error fetching Pokemon cards at Sudowoodo Page:", error);
     return [];
   }
 }
@@ -65,17 +73,13 @@ export default async function SudowoodoPage() {
   const cards = await getData();
 
   return (
-    <div className="flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-800 text-slate-950 dark:text-white px-4 py-2">
-      <div className="font-bold space-y-2 mb-4 justify-between sm:flex-col md:flex-row flex w-full">
-        <div>
-          <h1 className="text-4xl">Os cara de pau</h1>
-          <h2 className="text-xl">Sudowoodo & Bonsly</h2>
-        </div>
-        <h3 className="text-lg">
-          {cards.length} cards | {Math.ceil(cards.length / 4)} pages
-        </h3>
-      </div>
+    <Body className="bg-amber-50 dark:bg-amber-950 text-amber-950">
+      <Header
+        title={"Os cara de pau"}
+        subtitle={"Sudowoodo & Bonsly"}
+        totalCards={cards.length}
+      />
       <CardGrid cardCollection={cards} />
-    </div>
+    </Body>
   );
 }

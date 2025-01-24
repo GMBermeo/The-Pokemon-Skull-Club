@@ -1,7 +1,7 @@
 "use server";
 import { Metadata } from "next";
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
-import { CardGrid } from "@components";
+import { Body, CardGrid, Header } from "@components";
 import { baseMetadata, retryWithBackoff } from "@/lib";
 
 const metadata: Metadata = {
@@ -26,6 +26,14 @@ const metadata: Metadata = {
     url: "https://pokemon.bermeo.dev/toto",
     section: "Totodile",
     locale: "en_US",
+    images: [
+      {
+        url: "https://pokemon.bermeo.dev/opengraph/totodile.jpg",
+        width: 452,
+        height: 339,
+        alt: "Totodile biting",
+      },
+    ],
   },
 };
 
@@ -37,14 +45,14 @@ async function getData() {
   try {
     const response = await retryWithBackoff(() =>
       PokemonTCG.findCardsByQueries({
-        q: "nationalPokedexNumbers:[158 TO 160] -set.id:mcd*",
+        q: "nationalPokedexNumbers:[158 TO 160] -set.id:mcd* -subtypes:V-UNION",
         orderBy: "-set.releaseDate",
       })
     );
 
     return response;
   } catch (error) {
-    console.error("Error fetching Pokemon cards:", error);
+    console.error("Error fetching Pokemon cards at Totodile Page:", error);
     return [];
   }
 }
@@ -53,17 +61,13 @@ export default async function TotodilePage() {
   const cards = await getData();
 
   return (
-    <div className="flex flex-col items-center justify-center bg-sky-50 dark:bg-slate-950 text-sky-950 dark:text-white px-4 py-2">
-      <div className="font-bold space-y-2 mb-4 justify-between sm:flex-col md:flex-row flex w-full">
-        <div>
-          <h1 className="text-4xl">Totó</h1>
-          <h2 className="text-xl">Totodile, Croconaw & Feraligatr</h2>
-        </div>
-        <h3 className="text-lg">
-          {cards.length} cards | {Math.ceil(cards.length / 4)} pages
-        </h3>
-      </div>
+    <Body className="bg-blue-50 dark:bg-blue-950 text-blue-950">
+      <Header
+        title={"Totó"}
+        subtitle={"Totodile, Croconaw & Feraligatr"}
+        totalCards={cards.length}
+      />
       <CardGrid cardCollection={cards} />
-    </div>
+    </Body>
   );
 }

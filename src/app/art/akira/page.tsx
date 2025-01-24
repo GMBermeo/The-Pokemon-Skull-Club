@@ -1,7 +1,7 @@
 "use server";
 import { Metadata } from "next";
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
-import { CardGrid } from "@components";
+import { Body, CardGrid, Header } from "@components";
 import { baseMetadata, retryWithBackoff } from "@/lib";
 
 const metadata: Metadata = {
@@ -37,14 +37,14 @@ async function getData() {
   try {
     const response = await retryWithBackoff(() =>
       PokemonTCG.findCardsByQueries({
-        q: 'artist:"Akira Egawa" -set.id:mcd* supertype:"Pokémon" -subtypes:Union -rarity:Uncommon -rarity:Common',
+        q: 'artist:"Akira Egawa" -set.id:mcd* supertype:"Pokémon" -subtypes:V-UNION -rarity:Uncommon -rarity:Common',
         orderBy: "-set.releaseDate",
       })
     );
 
     return response;
   } catch (error) {
-    console.error("Error fetching Pokemon cards:", error);
+    console.error("Error fetching Pokemon cards at Akira Egawa Page:", error);
     return [];
   }
 }
@@ -53,17 +53,14 @@ export default async function AkiraEgawaPage() {
   const cards = await getData();
 
   return (
-    <div className="flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-800 text-slate-950 dark:text-white px-4 py-2">
-      <div className="font-bold space-y-2 mb-4 justify-between sm:flex-col md:flex-row flex w-full">
-        <div>
-          <h1 className="text-4xl">Akira Egawa</h1>
-          <h2 className="text-xl">Pokémon Card Artist</h2>
-        </div>
-        <h3 className="text-lg">
-          {cards.length} cards | {Math.ceil(cards.length / 4)} pages.
-        </h3>
-      </div>
+    <Body>
+      <Header
+        title={"Akira Egawa"}
+        subtitle={"Pokémon Card Artist"}
+        totalCards={cards.length}
+        slotsPerPage={9}
+      />
       <CardGrid cardCollection={cards} />
-    </div>
+    </Body>
   );
 }
