@@ -97,7 +97,7 @@ export async function loadCards(
         cardIds.add(card.id);
       }
     } catch (error) {
-      console.error("Error fetching card:", error);
+      console.error("Error fetching card:", params.q, error);
       continue; // Skip failed requests after retries
     }
   }

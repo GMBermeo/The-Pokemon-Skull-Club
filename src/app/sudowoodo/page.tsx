@@ -68,8 +68,8 @@ export default async function SudowoodoPage() {
     <div className="flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-800 text-slate-950 dark:text-white px-4 py-2">
       <div className="font-bold space-y-2 mb-4 justify-between flex w-full">
         <div>
-          <h1 className="text-4xl">Sudowoodo & Bonsly</h1>
-          <h2 className="text-xl">Cara de pau</h2>
+          <h1 className="text-4xl">Os cara de pau</h1>
+          <h2 className="text-xl">Sudowoodo & Bonsly</h2>
         </div>
         <h3 className="text-lg">
           {cards.length} cards | {Math.ceil(cards.length / 4)} pages
