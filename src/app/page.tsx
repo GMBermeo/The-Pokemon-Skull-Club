@@ -151,7 +151,7 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-800 text-slate-950 dark:text-white px-4 py-2">
-      <div className="font-bold space-y-2 mb-4 justify-between flex w-full">
+      <div className="font-bold space-y-2 mb-4 justify-between flex sm:flex-col flex-row w-full">
         <div>
           <h1 className="text-4xl">151 Original Pokémons and it's Variants</h1>
           <h2 className="text-xl">A Private Collection</h2>

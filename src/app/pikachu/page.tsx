@@ -53,7 +53,7 @@ export default async function PikachuPage() {
 
   return (
     <div className="flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-800 text-slate-950 dark:text-white px-4 py-2">
-      <div className="font-bold space-y-2 mb-4 justify-between flex w-full">
+      <div className="font-bold space-y-2 mb-4 justify-between sm:flex-col md:flex-row flex w-full">
         <div>
           <h1 className="text-4xl">Pikachu</h1>
           <h2 className="text-xl">The Mouse Pokémon</h2>
