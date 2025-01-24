@@ -1,29 +1,11 @@
 "use server";
 import { Metadata } from "next";
-import { CardGrid } from "@components";
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
-import { loadCards } from "@lib";
-
-const metadata: Metadata = {
-  title: "Pokémon TCG",
-  description:
-    "This tool was developed using the Static Site Generation (SSG) concept with Next.js 15in order to index all the original 151 Pokémons and it's variations cards of the Pokémon TCG for a private collection. 🐶 The source code can be found on github and easily changed to any other parameter.",
-  openGraph: {
-    title: "Pokemon TCG",
-    description:
-      "This tool was developed using the Static Site Generation (SSG) concept with Next.js 15in order to index all the original 151 Pokémons and it's variations cards of the Pokémon TCG for a private collection. 🐶 The source code can be found on github and easily changed to any other parameter.",
-    images: [
-      {
-        url: "https://lands-of-mtg.bermeo.dev/icons/favicon-3000x3000.png",
-        width: 3001,
-        height: 3001,
-      },
-    ],
-  },
-};
+import { CardGrid } from "@components";
+import { baseMetadata, loadCards } from "@lib";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return metadata;
+  return baseMetadata;
 }
 
 async function getData(): Promise<PokemonTCG.Card[]> {

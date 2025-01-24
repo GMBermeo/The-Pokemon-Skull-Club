@@ -50,6 +50,43 @@ export const baseMetadata: Metadata = {
     ],
     apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
   },
+  openGraph: {
+    title: "Pokemon TCG",
+    description:
+      "This tool was developed using the Static Site Generation (SSG) concept with Next.js 15in order to index all the original 151 Pokémons and it's variations cards of the Pokémon TCG for a private collection. 🐶 The source code can be found on github and easily changed to any other parameter.",
+    images: [
+      {
+        url: "https://pokemon.bermeo.dev/bones/ghost_marowak.jpg",
+        width: 1280,
+        height: 720,
+        type: "image/jpeg",
+      },
+      {
+        url: "https://pokemon.bermeo.dev/favicon.png",
+        width: 3001,
+        height: 3001,
+        type: "image/png",
+      },
+      {
+        url: "https://pokemon.bermeo.dev/bones/boneclub1.jpg",
+        width: 366,
+        height: 366,
+        type: "image/jpeg",
+      },
+      {
+        url: "https://pokemon.bermeo.dev/bones/boneclub2.jpg",
+        width: 325,
+        height: 403,
+        type: "image/jpeg",
+      },
+      {
+        url: "https://pokemon.bermeo.dev/bones/marowak.png",
+        width: 250,
+        height: 250,
+        type: "image/png",
+      },
+    ],
+  },
   /* themeColor: "#233140", */
   other: {},
 };

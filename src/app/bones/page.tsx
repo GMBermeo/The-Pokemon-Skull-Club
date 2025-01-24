@@ -27,19 +27,28 @@ const metadata: Metadata = {
     locale: "en_US",
     images: [
       {
+        url: "https://pokemon.bermeo.dev/bones/ghost_marowak.jpg",
+        width: 1280,
+        height: 720,
+        type: "image/jpeg",
+      },
+      {
         url: "https://pokemon.bermeo.dev/bones/boneclub1.jpg",
         width: 366,
         height: 366,
+        type: "image/jpeg",
       },
       {
         url: "https://pokemon.bermeo.dev/bones/boneclub2.jpg",
         width: 325,
         height: 403,
+        type: "image/jpeg",
       },
       {
         url: "https://pokemon.bermeo.dev/bones/marowak.png",
         width: 250,
         height: 250,
+        type: "image/png",
       },
     ],
   },
