@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+    xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+    xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+    <url>
+        <loc>https://pokemon.bermeo.dev</loc>
+        <image:image>
+            <image:loc>https://pokemon.bermeo.devlogo.svg</image:loc>
+            <image:loc>https://pokemon.bermeo.dev/favicon.ico</image:loc>
+            <image:loc>https://pokemon.bermeo.dev/favicon.png</image:loc>
+            <image:loc>https://pokemon.bermeo.dev/bones/ghost_marowak.jpg</image:loc>
+            <image:loc>https://pokemon.bermeo.dev/icons/android-chrome-192x192.png</image:loc>
+            <image:loc>https://pokemon.bermeo.dev/icons/android-chrome-512x512.png</image:loc>
+            <image:loc>https://pokemon.bermeo.dev/icons/apple-touch-icon.png</image:loc>
+            <image:loc>https://pokemon.bermeo.dev/icons/favicon-16x16.png</image:loc>
+            <image:loc>https://pokemon.bermeo.dev/icons/favicon-32x32.png</image:loc>
+        </image:image>
+        <lastmod>2024-03-19T00:00:00.000Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+    </url>
+    <!-- Pokemon Collection Pages -->
+    <url>
+        <loc>https://pokemon.bermeo.dev/bones</loc>
+        <image:image>
+            <image:loc>https://pokemon.bermeo.dev/bones/boneclub1.jpg</image:loc>
+            <image:loc>https://pokemon.bermeo.dev/bones/boneclub2.jpg</image:loc>
+            <image:loc>https://pokemon.bermeo.dev/bones/marowak.png</image:loc>
+        </image:image>
+        <lastmod>2024-03-19T00:00:00.000Z</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <url>
+        <loc>https://pokemon.bermeo.dev/charizard</loc>
+        <lastmod>2024-03-19T00:00:00.000Z</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <url>
+        <loc>https://pokemon.bermeo.dev/lucario</loc>
+        <lastmod>2024-03-19T00:00:00.000Z</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <url>
+        <loc>https://pokemon.bermeo.dev/pikachu</loc>
+        <lastmod>2024-03-19T00:00:00.000Z</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <url>
+        <loc>https://pokemon.bermeo.dev/sudowoodo</loc>
+        <lastmod>2024-03-19T00:00:00.000Z</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- Artist Pages -->
+    <url>
+        <loc>https://pokemon.bermeo.dev/art/akira</loc>
+        <lastmod>2024-03-19T00:00:00.000Z</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+
+</urlset>
