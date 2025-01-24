@@ -66,7 +66,7 @@ export function CardGrid({
               target="_blank"
               rel="noopener noreferrer"
               // Removed hover effect since it's now server-side
-              className="transition-opacity"
+              className="transition-opacity mt-auto"
             >
               <img
                 src={card.images.small}
