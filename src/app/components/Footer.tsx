@@ -5,8 +5,8 @@ import Link from "next/link";
 export const Footer = () => {
   return (
     <footer className="w-full print:hidden">
-      <div className="py-4 px-4 md:px-8 max-w-screen-2xl flex flex-col mx-auto">
-        <div className="flex justify-between ">
+      <div className="py-4 px-4 md:px-8 max-w-screen-2xl flex flex-col mx-auto mr-0 md:mr-12">
+        <div className="flex justify-between sm:flex-col md:flex-row">
           <Link
             href="/"
             className="hidden opacity-50 hover:opacity-100 dark:opacity-100 md:block"
@@ -26,7 +26,7 @@ export const Footer = () => {
               </Link>
             </h4>
           </div>
-          <div className="flex justify-end gap-x-4 md:gap-x-6">
+          <div className="flex justify-end gap-x-4 md:gap-x-6 md:mr-4 lg:mr-0">
             <Link href="https://github.com/GMBermeo">
               <Image
                 src="/social/github.svg"
@@ -49,7 +49,7 @@ export const Footer = () => {
             </Link>
           </div>
         </div>
-        <p className="mt-0 hidden text-center text-xs text-slate-500 lg:block">
+        <p className="text-center text-xs text-slate-500 block mb-12 md:mb-1 mt-1 md:mt-0">
           This website is not produced, endorsed, supported, or affiliated with
           Nintendo or The Pokémon Company.
         </p>

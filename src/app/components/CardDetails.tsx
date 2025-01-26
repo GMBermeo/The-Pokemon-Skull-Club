@@ -80,32 +80,45 @@ export function CardDetails({ card }: Readonly<CardDetailsProps>): JSX.Element {
           {/* Market Prices */}
           {card.tcgplayer && (
             <div className="mt-2 bg-slate-100 dark:bg-slate-800 shadow-inner  rounded-lg p-4">
-              <h3 className="font-bold mb-2">Market Prices</h3>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <dl>
-                  <dt className="font-semibold">Normal</dt>
-                  {prices.normal.high && <dd>High: {prices.normal.high}</dd>}
-                  {prices.normal.market && (
-                    <dd>Market: {prices.normal.market}</dd>
-                  )}
-                </dl>
-
-                <dl>
-                  <dt className="font-semibold">Holofoil</dt>
-                  {prices.holofoil.high && (
-                    <dd>High: {prices.holofoil.high}</dd>
-                  )}
-                  {prices.holofoil.market && (
-                    <dd>Market: {prices.holofoil.market}</dd>
-                  )}
-                </dl>
+              <div className="flex justify-between">
+                <h3 className="font-bold mb-2">Market Prices</h3>
+                {card.tcgplayer.updatedAt && (
+                  <h4 className="text-sm dark:text-slate-600 text-slate-400">
+                    Last updated:{" "}
+                    {new Date(card.tcgplayer.updatedAt).toLocaleDateString()}
+                  </h4>
+                )}
               </div>
-              {card.tcgplayer.updatedAt && (
-                <div className="text-sm dark:text-slate-600 text-slate-400 text-center">
-                  Last updated:{" "}
-                  {new Date(card.tcgplayer.updatedAt).toLocaleDateString()}
-                </div>
-              )}
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                {prices.normal.high ||
+                prices.normal.market ||
+                prices.holofoil.high ||
+                prices.holofoil.market ? (
+                  <>
+                    <dl>
+                      <dt className="font-semibold">Normal</dt>
+                      {prices.normal.high && (
+                        <dd>High: {prices.normal.high}</dd>
+                      )}
+                      {prices.normal.market && (
+                        <dd>Market: {prices.normal.market}</dd>
+                      )}
+                    </dl>
+
+                    <dl>
+                      <dt className="font-semibold">Holofoil</dt>
+                      {prices.holofoil.high && (
+                        <dd>High: {prices.holofoil.high}</dd>
+                      )}
+                      {prices.holofoil.market && (
+                        <dd>Market: {prices.holofoil.market}</dd>
+                      )}
+                    </dl>
+                  </>
+                ) : (
+                  <p>No prices available</p>
+                )}
+              </div>
             </div>
           )}
         </div>

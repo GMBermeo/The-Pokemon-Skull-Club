@@ -10,7 +10,7 @@ interface HeaderProps {
 
 export const Header = (props: HeaderProps) => {
   return (
-    <div className="font-bold space-y-2 mb-4 justify-between flex xs:flex-col md:flex-row w-full">
+    <div className="font-bold space-y-2 mb-4 justify-between flex flex-col md:flex-row w-full">
       <div>
         <Link href="/">
           <h1 className="text-4xl">{props.title}</h1>{" "}

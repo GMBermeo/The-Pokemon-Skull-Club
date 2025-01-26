@@ -2,7 +2,7 @@
 import { Metadata } from "next";
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
 import { Body, CardGrid, Header } from "@components";
-import { baseMetadata, retryWithBackoff } from "@/lib";
+import { baseMetadata, retryWithBackoff } from "@lib";
 
 const metadata: Metadata = {
   ...baseMetadata,
@@ -37,7 +37,7 @@ async function getData() {
   try {
     const response = await retryWithBackoff(() =>
       PokemonTCG.findCardsByQueries({
-        q: 'artist:"Akira Egawa" -set.id:mcd* supertype:"Pokémon" -subtypes:V-UNION -rarity:Uncommon -rarity:Common',
+        q: 'artist:"Akira Egawa" -set.id:mcd* supertype:"Pokémon" -subtypes:V-UNION',
         orderBy: "-set.releaseDate",
       })
     );

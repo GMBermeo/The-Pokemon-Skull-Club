@@ -111,6 +111,11 @@ export async function generateStaticParams() {
         q: "nationalPokedexNumbers:[158 TO 160] -set.id:mcd* -subtypes:V-UNION",
       })
     );
+    const psyduck = await retryWithBackoff(() =>
+      PokemonTCG.findCardsByQueries({
+        q: "nationalPokedexNumbers:54 -set.id:mcd* -subtypes:V-UNION",
+      })
+    );
 
     const cards = [
       ...marowaks,
@@ -119,6 +124,7 @@ export async function generateStaticParams() {
       ...lucarios,
       ...sudowoodos,
       ...totodiles,
+      ...psyduck,
     ];
 
     return cards.map((card) => ({

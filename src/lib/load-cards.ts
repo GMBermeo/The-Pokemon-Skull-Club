@@ -52,7 +52,7 @@ export async function loadCards(
       q: `nationalPokedexNumbers:${i} ${generalFilter}`,
       pageSize: 1,
       orderBy:
-        "rarity, -tcgplayer.prices.normal.market, -tcgplayer.prices.holofoil.market",
+        "rarity, tcgplayer.prices.normal.market, tcgplayer.prices.holofoil.market",
     };
     paramsArray.push(params);
   }
@@ -64,7 +64,7 @@ export async function loadCards(
         q: `nationalPokedexNumbers:${i} ${generalFilter} subtypes:${subtype}`,
         pageSize: 1,
         orderBy:
-          "rarity, -tcgplayer.prices.normal.market, -tcgplayer.prices.holofoil.market",
+          "rarity, tcgplayer.prices.normal.market, tcgplayer.prices.holofoil.market",
       };
       paramsArray.push(params);
     }
@@ -76,7 +76,7 @@ export async function loadCards(
       const params: PokemonTCG.Parameter = {
         q: `nationalPokedexNumbers:${i} ${generalFilter} name:${region}`,
         pageSize: 1,
-        orderBy: "rarity, -tcgplayer.prices.market",
+        orderBy: "rarity, tcgplayer.prices.market",
       };
       paramsArray.push(params);
     }
