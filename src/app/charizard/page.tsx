@@ -2,7 +2,7 @@
 import { Metadata } from "next";
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
 import { Body, CardGrid, Header } from "@components";
-import { baseMetadata, retryWithBackoff } from "@/lib";
+import { baseMetadata, retryWithBackoff } from "@lib";
 
 const metadata: Metadata = {
   ...baseMetadata,
@@ -25,6 +25,20 @@ const metadata: Metadata = {
     url: "https://pokemon.bermeo.dev/charizard",
     section: "Charizard",
     locale: "en_US",
+    images: [
+      {
+        url: "https://pokemon.bermeo.dev/opengraph/charizard1.jpg",
+        width: 800,
+        height: 450,
+        type: "image/jpeg",
+      },
+      {
+        url: "https://pokemon.bermeo.dev/opengraph/charizard2.jpg",
+        width: 1206,
+        height: 679,
+        type: "image/jpeg",
+      },
+    ],
   },
 };
 

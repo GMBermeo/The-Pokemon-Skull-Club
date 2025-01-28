@@ -2,7 +2,8 @@
 import { Metadata } from "next";
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
 import { Body, CardGrid, Header } from "@components";
-import { baseMetadata, retryWithBackoff } from "@/lib";
+import { baseMetadata, retryWithBackoff } from "@lib";
+import { sortCardsByDateAndPokedex } from "@utils";
 
 const metadata: Metadata = {
   ...baseMetadata,
@@ -25,6 +26,15 @@ const metadata: Metadata = {
     url: "https://pokemon.bermeo.dev/lucario",
     section: "Lucario",
     locale: "en_US",
+    images: [
+      {
+        url: "https://pokemon.bermeo.dev/opengraph/lucario.jpg",
+        width: 1400,
+        height: 700,
+        alt: "Lucario & Riolu",
+        type: "image/jpeg",
+      },
+    ],
   },
 };
 
@@ -34,14 +44,14 @@ export async function generateMetadata(): Promise<Metadata> {
 
 async function getData() {
   try {
-    const response = await retryWithBackoff(() =>
+    const response: PokemonTCG.Card[] = await retryWithBackoff(() =>
       PokemonTCG.findCardsByQueries({
         q: "nationalPokedexNumbers:[447 TO 448] -set.id:mcd* -subtypes:V-UNION",
         orderBy: "-set.releaseDate",
       })
     );
 
-    return response;
+    return sortCardsByDateAndPokedex(response);
   } catch (error) {
     console.error("Error fetching Pokemon cards at Lucario Page:", error);
     return [];

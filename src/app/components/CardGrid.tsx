@@ -19,7 +19,7 @@ export function CardGrid({
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-      {cardCollection.map((card, index) => {
+      {cardCollection.map((card: PokemonTCG.Card, index: number) => {
         const indexCarta: number = totalCards - index;
         // Server-side price formatting
         const normalHigh: string | null = formatPrice(
@@ -53,7 +53,7 @@ export function CardGrid({
                 {card.set.printedTotal})
               </p>
               <p>
-                [{indexCarta}/{totalCards}]
+                ©{card.set.releaseDate.slice(0, 4)} [{indexCarta}/{totalCards}]
               </p>
             </div>
 

@@ -2,7 +2,8 @@
 import { Metadata } from "next";
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
 import { Body, CardGrid, Header } from "@components";
-import { baseMetadata, retryWithBackoff } from "@/lib";
+import { baseMetadata, retryWithBackoff } from "@lib";
+import { sortCardsByDateAndPokedex } from "@utils";
 
 const metadata: Metadata = {
   ...baseMetadata,
@@ -29,9 +30,10 @@ const metadata: Metadata = {
     images: [
       {
         url: "https://pokemon.bermeo.dev/opengraph/sudowoodo.jpg",
-        width: 334,
-        height: 402,
-        alt: "Sudowoodo Golden Boys",
+        width: 800,
+        height: 450,
+        alt: "Sudowoodos",
+        type: "image/jpeg",
       },
     ],
   },
@@ -43,26 +45,21 @@ export async function generateMetadata(): Promise<Metadata> {
 
 async function getData() {
   try {
-    const sudowoodoResponse = await retryWithBackoff(() =>
+    const sudowoodoResponse: PokemonTCG.Card[] = await retryWithBackoff(() =>
       PokemonTCG.findCardsByQueries({
         q: "nationalPokedexNumbers:185 -set.id:mcd* -subtypes:V-UNION",
         orderBy: "-set.releaseDate",
       })
     );
 
-    const bonslyResponse = await retryWithBackoff(() =>
+    const bonslyResponse: PokemonTCG.Card[] = await retryWithBackoff(() =>
       PokemonTCG.findCardsByQueries({
         q: "nationalPokedexNumbers:438 -set.id:mcd* -subtypes:V-UNION",
         orderBy: "-set.releaseDate",
       })
     );
 
-    return [...sudowoodoResponse, ...bonslyResponse].sort((a, b) => {
-      return (
-        new Date(b.set.releaseDate).getTime() -
-        new Date(a.set.releaseDate).getTime()
-      );
-    });
+    return sortCardsByDateAndPokedex([...sudowoodoResponse, ...bonslyResponse]);
   } catch (error) {
     console.error("Error fetching Pokemon cards at Sudowoodo Page:", error);
     return [];

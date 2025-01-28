@@ -31,6 +31,7 @@ const routes: Route[] = [
   },
   { path: "/charizard", label: "Charizards", className: "text-orange-500" },
   { path: "/lucario", label: "Riolus & Lucarios", className: "text-cyan-500" },
+  { path: "/mewtwo", label: "Mewtwos", className: "text-purple-500" },
   { path: "/pikachu", label: "Pikachus", className: "text-yellow-400" },
   { path: "/psyduck", label: "Psyducks", className: "text-yellow-500" },
   {

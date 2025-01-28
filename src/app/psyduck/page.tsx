@@ -2,7 +2,7 @@
 import { Metadata } from "next";
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
 import { Body, CardGrid, Header } from "@components";
-import { baseMetadata, retryWithBackoff } from "@/lib";
+import { baseMetadata, retryWithBackoff } from "@lib";
 
 const metadata: Metadata = {
   ...baseMetadata,
@@ -31,6 +31,7 @@ const metadata: Metadata = {
         width: 1178,
         height: 679,
         alt: "Psyduck meme",
+        type: "image/jpeg",
       },
     ],
   },

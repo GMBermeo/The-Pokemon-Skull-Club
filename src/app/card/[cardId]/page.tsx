@@ -2,7 +2,7 @@
 import { Metadata } from "next";
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
 import { Body, CardDetails } from "@components";
-import { baseMetadata, retryWithBackoff } from "@lib";
+import { baseMetadata, fetchPokemonCollection, retryWithBackoff } from "@lib";
 import { Suspense } from "react";
 import Link from "next/link";
 
@@ -54,7 +54,14 @@ export async function generateMetadata({
       description: fetchedCard?.flavorText ?? fetchedCard.id,
       url: `https://pokemon.bermeo.dev/card/${fetchedCard.id}`,
       section: fetchedCard.name,
-      images: [fetchedCard.images.small],
+      images: [
+        {
+          url: fetchedCard.images.large,
+          width: 734,
+          height: 1024,
+          type: "image/png",
+        },
+      ],
       locale: "en_US",
     },
     keywords: [
@@ -81,6 +88,8 @@ export async function generateMetadata({
 
 export async function generateStaticParams() {
   try {
+    const uniqueCardsMap: Map<string, PokemonTCG.Card> = new Map();
+
     const marowaks = await retryWithBackoff(() =>
       PokemonTCG.findCardsByQueries({
         q: "nationalPokedexNumbers:[104 TO 105] -set.id:mcd* -subtypes:V-UNION",
@@ -116,20 +125,36 @@ export async function generateStaticParams() {
         q: "nationalPokedexNumbers:54 -set.id:mcd* -subtypes:V-UNION",
       })
     );
+    const mewtwo = await retryWithBackoff(() =>
+      PokemonTCG.findCardsByQueries({
+        q: "nationalPokedexNumbers:150 -set.id:mcd* -subtypes:V-UNION",
+      })
+    );
 
-    const cards = [
+    const originalCollection: PokemonTCG.Card[] =
+      await fetchPokemonCollection();
+    [
       ...marowaks,
       ...charizards,
       ...pikachus,
       ...lucarios,
+      ...mewtwo,
+      ...psyduck,
       ...sudowoodos,
       ...totodiles,
-      ...psyduck,
-    ];
+      ...originalCollection,
+    ].forEach((card) => {
+      uniqueCardsMap.set(card.id, card);
+    });
 
-    return cards.map((card) => ({
+    const arrayUniqueCards = Array.from(uniqueCardsMap.values());
+
+    return arrayUniqueCards.map((card) => ({
       cardId: card.id,
     }));
+    // return cards.map((card) => ({
+    //   cardId: card.id,
+    // }));
   } catch (error) {
     console.error("Error fetching Pokemon cards at Bones Page:", error);
     return [];

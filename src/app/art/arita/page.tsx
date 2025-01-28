@@ -3,6 +3,7 @@ import { Metadata } from "next";
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
 import { Body, CardGrid, Header } from "@components";
 import { baseMetadata, retryWithBackoff } from "@lib";
+import { sortCardsByDateAndPokedex } from "@utils";
 
 const metadata: Metadata = {
   ...baseMetadata,
@@ -38,11 +39,11 @@ async function getData() {
     const response = await retryWithBackoff(() =>
       PokemonTCG.findCardsByQueries({
         q: 'artist:"Mitsuhiro Arita" -set.id:mcd* supertype:"Pokémon" -subtypes:V-UNION',
-        orderBy: "-set.releaseDate, number",
+        orderBy: "-set.releaseDate",
       })
     );
 
-    return response;
+    return sortCardsByDateAndPokedex(response);
   } catch (error) {
     console.error(
       "Error fetching Pokemon cards at Mitsuhiro Arita Page:",

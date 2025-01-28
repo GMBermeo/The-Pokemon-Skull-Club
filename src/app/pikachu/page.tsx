@@ -2,7 +2,7 @@
 import { Metadata } from "next";
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
 import { Body, CardGrid, Header } from "@components";
-import { baseMetadata, retryWithBackoff } from "@/lib";
+import { baseMetadata, retryWithBackoff } from "@lib";
 
 const metadata: Metadata = {
   ...baseMetadata,
@@ -25,6 +25,14 @@ const metadata: Metadata = {
     url: "https://pokemon.bermeo.dev/pikachu",
     section: "Pikachu",
     locale: "en_US",
+    images: [
+      {
+        url: "https://pokemon.bermeo.dev/opengraph/pikachu.jpg",
+        width: 1210,
+        height: 544,
+        type: "image/jpeg",
+      },
+    ],
   },
 };
 

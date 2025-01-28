@@ -1,4 +1,11 @@
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
+import { sortCardsByDateAndPokedex } from "@utils";
+
+interface ApiError extends Error {
+  response?: {
+    status: number;
+  };
+}
 
 export async function retryWithBackoff<T>(
   fn: () => Promise<T>,
@@ -7,8 +14,9 @@ export async function retryWithBackoff<T>(
 ): Promise<T> {
   try {
     return await fn();
-  } catch (error: any) {
-    if (retries === 0 || error?.response?.status !== 429) {
+  } catch (error) {
+    const apiError = error as ApiError;
+    if (retries === 0 || apiError?.response?.status !== 429) {
       throw error;
     }
     const delay =
@@ -58,7 +66,7 @@ export async function loadCards(
   }
 
   // Add the parameters for subtypes
-  for (let subtype of subtypes) {
+  for (const subtype of subtypes) {
     for (let i = startPokemon; i <= totalPokemons; i++) {
       const params: PokemonTCG.Parameter = {
         q: `nationalPokedexNumbers:${i} ${generalFilter} subtypes:${subtype}`,
@@ -71,7 +79,7 @@ export async function loadCards(
   }
 
   // Add the parameters for regions
-  for (let region of regions) {
+  for (const region of regions) {
     for (let i = startPokemon; i <= totalPokemons; i++) {
       const params: PokemonTCG.Parameter = {
         q: `nationalPokedexNumbers:${i} ${generalFilter} name:${region}`,
@@ -86,7 +94,7 @@ export async function loadCards(
   const cardIds = new Set<string>(); // Create a Set to track unique card IDs
 
   // Update the card fetching loop
-  for (let params of paramsArray) {
+  for (const params of paramsArray) {
     try {
       const response: PokemonTCG.Card[] = await retryWithBackoff(() =>
         PokemonTCG.findCardsByQueries(params)
@@ -102,13 +110,5 @@ export async function loadCards(
     }
   }
 
-  // Sort the cardCollection array by nationalPokedexNumbers[0]
-  cardCollection.sort(
-    (a, b) =>
-      (a.nationalPokedexNumbers![0] - b.nationalPokedexNumbers![0] ||
-        a.hp?.localeCompare(b.hp!)) ??
-      a.set.releaseDate.localeCompare(b.set.releaseDate)
-  );
-
-  return cardCollection;
+  return sortCardsByDateAndPokedex(cardCollection);
 }

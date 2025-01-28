@@ -2,7 +2,8 @@
 import { Metadata } from "next";
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
 import { Body, CardGrid, Header } from "@components";
-import { baseMetadata, retryWithBackoff } from "@/lib";
+import { baseMetadata, retryWithBackoff } from "@lib";
+import { sortCardsByDateAndPokedex } from "@utils";
 
 const metadata: Metadata = {
   ...baseMetadata,
@@ -32,6 +33,7 @@ const metadata: Metadata = {
         width: 452,
         height: 339,
         alt: "Totodile biting",
+        type: "image/jpeg",
       },
     ],
   },
@@ -50,7 +52,7 @@ async function getData() {
       })
     );
 
-    return response;
+    return sortCardsByDateAndPokedex(response);
   } catch (error) {
     console.error("Error fetching Pokemon cards at Totodile Page:", error);
     return [];
