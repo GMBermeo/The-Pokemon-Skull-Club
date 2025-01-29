@@ -131,6 +131,26 @@ export async function generateStaticParams() {
       })
     );
 
+    const yukaMorii = await retryWithBackoff(() =>
+      PokemonTCG.findCardsByQueries({
+        q: 'artist:"Yuka Morii" -set.id:mcd* supertype:"Pokémon" -subtypes:V-UNION',
+        orderBy: "-set.releaseDate",
+      })
+    );
+    const arita = await retryWithBackoff(() =>
+      PokemonTCG.findCardsByQueries({
+        q: 'artist:"Mitsuhiro Arita" -set.id:mcd* supertype:"Pokémon" -subtypes:V-UNION',
+        orderBy: "-set.releaseDate",
+      })
+    );
+
+    const akira = await retryWithBackoff(() =>
+      PokemonTCG.findCardsByQueries({
+        q: 'artist:"Akira Egawa" -set.id:mcd* supertype:"Pokémon" -subtypes:V-UNION',
+        orderBy: "-set.releaseDate",
+      })
+    );
+
     const originalCollection: PokemonTCG.Card[] =
       await fetchPokemonCollection();
     [
@@ -143,6 +163,9 @@ export async function generateStaticParams() {
       ...sudowoodos,
       ...totodiles,
       ...originalCollection,
+      ...arita,
+      ...akira,
+      ...yukaMorii,
     ].forEach((card) => {
       uniqueCardsMap.set(card.id, card);
     });

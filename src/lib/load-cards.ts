@@ -1,5 +1,4 @@
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
-import { sortCardsByDateAndPokedex } from "@utils";
 
 interface ApiError extends Error {
   response?: {
@@ -110,5 +109,5 @@ export async function loadCards(
     }
   }
 
-  return sortCardsByDateAndPokedex(cardCollection);
+  return cardCollection;
 }

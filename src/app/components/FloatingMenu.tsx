@@ -25,6 +25,11 @@ const routes: Route[] = [
     className: "text-slate-500",
   },
   {
+    path: "/art/morii",
+    label: "Yuka Morii's Art",
+    className: "text-slate-500",
+  },
+  {
     path: "/bones",
     label: "Bone Club - Cubones & Marowaks",
     className: "text-amber-500",
