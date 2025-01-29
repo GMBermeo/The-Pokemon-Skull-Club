@@ -49,9 +49,14 @@ async function getData() {
       })
     );
 
+    if (!response || !Array.isArray(response)) {
+      console.error("Invalid response format from Pokemon TCG API");
+      return [];
+    }
+
     return response;
   } catch (error) {
-    console.error("Error fetching Pokemon cards at Charizard Page:", error);
+    console.error("Error fetching Pokemon cards at EX Cards Page:", error);
     return [];
   }
 }
@@ -59,15 +64,18 @@ async function getData() {
 export default async function EXCardsPage() {
   const cards = await getData();
 
+  // Ensure cards is always an array
+  const safeCards = Array.isArray(cards) ? cards : [];
+
   return (
     <Body className="bg-purple-50 dark:bg-purple-950 text-purple-950">
       <Header
         title={"EX Cards"}
         subtitle={"Special & Powerful"}
-        totalCards={cards.length}
+        totalCards={safeCards.length}
         slotsPerPage={9}
       />
-      <CardGrid cardCollection={cards} />
+      <CardGrid cardCollection={safeCards} />
     </Body>
   );
 }
