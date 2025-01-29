@@ -9,7 +9,7 @@ const metadata: Metadata = {
   ...baseMetadata,
   title: "Mitsuhiro Arita's Art",
   description:
-    "🎨 This tool was developed using the SSG with Next.js 15 in order to index all Pokémon TCG cards illustrated by Mitsuhiro Arita. Known for their distinctive art style and dynamic compositions, Egawa has contributed many memorable illustrations to the Pokémon Trading Card Game. 🎨 The source code can be found on github and easily changed to any other parameter.",
+    "Discover Mitsuhiro Arita's legendary Pokémon card artwork collection. Explore iconic illustrations from the original Base Set to modern expansions. Features the complete portfolio of one of Pokémon TCG's most influential artists, with detailed card information.",
   keywords: [
     "pokemon",
     "tcg",
@@ -23,7 +23,7 @@ const metadata: Metadata = {
   openGraph: {
     title: "Mitsuhiro Arita's Pokémon Card Art",
     description:
-      "🎨 This tool was developed using the SSG with Next.js 15 in order to index all Pokémon TCG cards illustrated by Mitsuhiro Arita. Known for their distinctive art style and dynamic compositions, Egawa has contributed many memorable illustrations to the Pokémon Trading Card Game. 🎨 The source code can be found on github and easily changed to any other parameter.",
+      "Discover Mitsuhiro Arita's legendary Pokémon card artwork collection. Explore iconic illustrations from the original Base Set to modern expansions. Features the complete portfolio of one of Pokémon TCG's most influential artists, with detailed card information.",
     url: "https://pokemon.bermeo.dev/art/arita",
     section: "Artist Gallery",
     locale: "en_US",

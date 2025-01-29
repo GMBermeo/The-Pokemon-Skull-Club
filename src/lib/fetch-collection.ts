@@ -2,7 +2,7 @@ import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
 import { loadCards } from "@lib";
 
 export async function fetchPokemonCollection(): Promise<PokemonTCG.Card[]> {
-  const cardCollections = await Promise.all([
+  const cardCollections = await Promise.allSettled([
     loadCards(1, 24),
     loadCards(172),
     loadCards(25, 34),
@@ -69,5 +69,16 @@ export async function fetchPokemonCollection(): Promise<PokemonTCG.Card[]> {
     loadCards(143, 151),
   ]);
 
-  return cardCollections.flat();
+  // Filter for successful promises and flatten their values
+  return cardCollections
+    .filter(
+      (result): result is PromiseFulfilledResult<PokemonTCG.Card[]> =>
+        result.status === "fulfilled"
+    )
+    .map((result) => result.value)
+    .flat()
+    .filter(
+      (card: PokemonTCG.Card, index: number, self: PokemonTCG.Card[]) =>
+        index === self.findIndex((t) => t.id === card.id)
+    );
 }

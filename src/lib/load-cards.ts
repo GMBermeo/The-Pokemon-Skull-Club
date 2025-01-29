@@ -103,9 +103,23 @@ export async function loadCards(
         cardCollection.push(card);
         cardIds.add(card.id);
       }
-    } catch (error) {
-      console.error("Error fetching card:", params.q, error);
-      continue; // Skip failed requests after retries
+    } catch (error: unknown) {
+      if ((error as ApiError).response?.status == 404) {
+        console.error(
+          "Error fetching card, skipping:",
+          params.q,
+          (error as ApiError).response?.status
+        );
+        break;
+      }
+      if ((error as ApiError).response?.status != 429) {
+        console.error(
+          "Error fetching card:",
+          params.q,
+          (error as ApiError).response?.status
+        );
+      }
+      continue;
     }
   }
 

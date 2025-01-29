@@ -30,6 +30,11 @@ const routes: Route[] = [
     className: "text-slate-500",
   },
   {
+    path: "/ex",
+    label: "EX Cards",
+    className: "text-grey-500",
+  },
+  {
     path: "/bones",
     label: "Bone Club - Cubones & Marowaks",
     className: "text-amber-500",
@@ -103,24 +108,27 @@ export const FloatingMenu = () => {
             isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
         >
-          <nav className="py-3" aria-hidden={!isOpen}>
+          <nav className="py-3">
             <h3 className="text-slate-800 dark:text-slate-100 font-medium p-4">
               Pages
             </h3>
-            {routes.map((route) => (
-              <Link
-                key={route.path}
-                href={route.path}
-                className="block px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700"
-                onClick={() => setIsOpen(false)}
-              >
-                <li className={`list-disc mr-0 ${route.className}`}>
-                  <span className="text-slate-800 dark:text-slate-100">
-                    {route.label}
-                  </span>
+            <ul className="list-none m-0 p-0">
+              {routes.map((route) => (
+                <li key={route.path}>
+                  <Link
+                    href={route.path}
+                    className="block px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <span
+                      className={`${route.className} text-slate-800 dark:text-slate-100`}
+                    >
+                      {route.label}
+                    </span>
+                  </Link>
                 </li>
-              </Link>
-            ))}
+              ))}
+            </ul>
           </nav>
         </div>
       </div>

@@ -9,7 +9,7 @@ const metadata: Metadata = {
   ...baseMetadata,
   title: "Yuka Morii's Art",
   description:
-    "🎨 This tool was developed using the SSG with Next.js 15 in order to index all Pokémon TCG cards illustrated by Yuka Morii. Known for their distinctive art style and dynamic compositions, Egawa has contributed many memorable illustrations to the Pokémon Trading Card Game. 🎨 The source code can be found on github and easily changed to any other parameter.",
+    "Browse Yuka Morii's charming Pokémon card artwork collection. Experience their unique clay model art style that brings Pokémon to life in 3D. Features a complete gallery of their distinctive illustrations with detailed card information and high-quality images.",
   keywords: [
     "pokemon",
     "tcg",
@@ -23,7 +23,7 @@ const metadata: Metadata = {
   openGraph: {
     title: "Yuka Morii's Pokémon Card Art",
     description:
-      "🎨 This tool was developed using the SSG with Next.js 15 in order to index all Pokémon TCG cards illustrated by Yuka Morii. Known for their distinctive art style and dynamic compositions, Egawa has contributed many memorable illustrations to the Pokémon Trading Card Game. 🎨 The source code can be found on github and easily changed to any other parameter.",
+      "Browse Yuka Morii's charming Pokémon card artwork collection. Experience their unique clay model art style that brings Pokémon to life in 3D. Features a complete gallery of their distinctive illustrations with detailed card information and high-quality images.",
     url: "https://pokemon.bermeo.dev/art/akira",
     section: "Artist Gallery",
     locale: "en_US",

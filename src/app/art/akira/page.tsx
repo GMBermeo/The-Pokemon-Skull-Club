@@ -8,7 +8,7 @@ const metadata: Metadata = {
   ...baseMetadata,
   title: "Akira Egawa's Art",
   description:
-    "🎨 This tool was developed using the SSG with Next.js 15 in order to index all Pokémon TCG cards illustrated by Akira Egawa. Known for their distinctive art style and dynamic compositions, Egawa has contributed many memorable illustrations to the Pokémon Trading Card Game. 🎨 The source code can be found on github and easily changed to any other parameter.",
+    "Explore Akira Egawa's stunning Pokémon card illustrations. Discover their unique art style, memorable card designs, and complete artwork portfolio for the Pokémon Trading Card Game. Features high-quality images and detailed information about each card.",
   keywords: [
     "pokemon",
     "tcg",
@@ -22,7 +22,7 @@ const metadata: Metadata = {
   openGraph: {
     title: "Akira Egawa's Pokémon Card Art",
     description:
-      "🎨 This tool was developed using the SSG with Next.js 15 in order to index all Pokémon TCG cards illustrated by Akira Egawa. Known for their distinctive art style and dynamic compositions, Egawa has contributed many memorable illustrations to the Pokémon Trading Card Game. 🎨 The source code can be found on github and easily changed to any other parameter.",
+      "Explore Akira Egawa's stunning Pokémon card illustrations. Discover their unique art style, memorable card designs, and complete artwork portfolio for the Pokémon Trading Card Game. Features high-quality images and detailed information about each card.",
     url: "https://pokemon.bermeo.dev/art/akira",
     section: "Artist Gallery",
     locale: "en_US",

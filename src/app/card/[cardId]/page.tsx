@@ -1,10 +1,14 @@
 "use server";
+import { Suspense } from "react";
 import { Metadata } from "next";
+import Link from "next/link";
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
 import { Body, CardDetails } from "@components";
 import { baseMetadata, fetchPokemonCollection, retryWithBackoff } from "@lib";
-import { Suspense } from "react";
-import Link from "next/link";
+
+interface Params {
+  cardId: string;
+}
 
 async function getData(cardId: string): Promise<PokemonTCG.Card | undefined> {
   try {
@@ -21,9 +25,9 @@ async function getData(cardId: string): Promise<PokemonTCG.Card | undefined> {
 export async function generateMetadata({
   params,
 }: Readonly<{
-  params: Promise<{ cardId: string }>;
+  params: Promise<Params>;
 }>): Promise<Metadata> {
-  const resolvedParams = await params;
+  const resolvedParams: Params = await params;
   const fetchedCard: PokemonTCG.Card | undefined = await getData(
     resolvedParams.cardId
   );
@@ -51,7 +55,7 @@ export async function generateMetadata({
     description: fetchedCard.supertype,
     openGraph: {
       title: fetchedCard.name,
-      description: fetchedCard?.flavorText ?? fetchedCard.id,
+      description: `${fetchedCard?.flavorText}. ${fetchedCard.id} - ${fetchedCard.set.name}: ${fetchedCard.set.series}. ${fetchedCard.set.releaseDate}. Art: ${fetchedCard.artist}`,
       url: `https://pokemon.bermeo.dev/card/${fetchedCard.id}`,
       section: fetchedCard.name,
       images: [
@@ -88,98 +92,101 @@ export async function generateMetadata({
 
 export async function generateStaticParams() {
   try {
-    const uniqueCardsMap: Map<string, PokemonTCG.Card> = new Map();
+    const staticCards = await Promise.allSettled([
+      retryWithBackoff(() =>
+        PokemonTCG.findCardsByQueries({
+          q: 'artist:"Akira Egawa" -set.id:mcd* supertype:"Pokémon" -subtypes:V-UNION',
+          orderBy: "-set.releaseDate",
+        })
+      ),
+      retryWithBackoff(() =>
+        PokemonTCG.findCardsByQueries({
+          q: "nationalPokedexNumbers:[104 TO 105] -set.id:mcd* -subtypes:V-UNION",
+        })
+      ),
+      retryWithBackoff(() =>
+        PokemonTCG.findCardsByQueries({
+          q: "nationalPokedexNumbers:6 -set.id:mcd* -subtypes:V-UNION",
+        })
+      ),
+      retryWithBackoff(() =>
+        PokemonTCG.findCardsByQueries({
+          q: "nationalPokedexNumbers:25 -set.id:mcd* -subtypes:V-UNION",
+        })
+      ),
+      retryWithBackoff(() =>
+        PokemonTCG.findCardsByQueries({
+          q: "nationalPokedexNumbers:[447 TO 448] -set.id:mcd* -subtypes:V-UNION",
+        })
+      ),
+      retryWithBackoff(() =>
+        PokemonTCG.findCardsByQueries({
+          q: "nationalPokedexNumbers:185 -set.id:mcd* -subtypes:V-UNION",
+        })
+      ),
+      retryWithBackoff(() =>
+        PokemonTCG.findCardsByQueries({
+          q: "nationalPokedexNumbers:[158 TO 160] -set.id:mcd* -subtypes:V-UNION",
+        })
+      ),
+      retryWithBackoff(() =>
+        PokemonTCG.findCardsByQueries({
+          q: "nationalPokedexNumbers:54 -set.id:mcd* -subtypes:V-UNION",
+        })
+      ),
+      retryWithBackoff(() =>
+        PokemonTCG.findCardsByQueries({
+          q: "nationalPokedexNumbers:150 -set.id:mcd* -subtypes:V-UNION",
+        })
+      ),
 
-    const marowaks = await retryWithBackoff(() =>
-      PokemonTCG.findCardsByQueries({
-        q: "nationalPokedexNumbers:[104 TO 105] -set.id:mcd* -subtypes:V-UNION",
-      })
-    );
-    const charizards = await retryWithBackoff(() =>
-      PokemonTCG.findCardsByQueries({
-        q: "nationalPokedexNumbers:6 -set.id:mcd* -subtypes:V-UNION",
-      })
-    );
-    const pikachus = await retryWithBackoff(() =>
-      PokemonTCG.findCardsByQueries({
-        q: "nationalPokedexNumbers:25 -set.id:mcd* -subtypes:V-UNION",
-      })
-    );
-    const lucarios = await retryWithBackoff(() =>
-      PokemonTCG.findCardsByQueries({
-        q: "nationalPokedexNumbers:[447 TO 448] -set.id:mcd* -subtypes:V-UNION",
-      })
-    );
-    const sudowoodos = await retryWithBackoff(() =>
-      PokemonTCG.findCardsByQueries({
-        q: "nationalPokedexNumbers:185 -set.id:mcd* -subtypes:V-UNION",
-      })
-    );
-    const totodiles = await retryWithBackoff(() =>
-      PokemonTCG.findCardsByQueries({
-        q: "nationalPokedexNumbers:[158 TO 160] -set.id:mcd* -subtypes:V-UNION",
-      })
-    );
-    const psyduck = await retryWithBackoff(() =>
-      PokemonTCG.findCardsByQueries({
-        q: "nationalPokedexNumbers:54 -set.id:mcd* -subtypes:V-UNION",
-      })
-    );
-    const mewtwo = await retryWithBackoff(() =>
-      PokemonTCG.findCardsByQueries({
-        q: "nationalPokedexNumbers:150 -set.id:mcd* -subtypes:V-UNION",
-      })
-    );
+      retryWithBackoff(() =>
+        PokemonTCG.findCardsByQueries({
+          q: 'artist:"Yuka Morii" -set.id:mcd* supertype:"Pokémon" -subtypes:V-UNION',
+          orderBy: "-set.releaseDate",
+        })
+      ),
+      retryWithBackoff(() =>
+        PokemonTCG.findCardsByQueries({
+          q: 'artist:"Mitsuhiro Arita" -set.id:mcd* supertype:"Pokémon" -subtypes:V-UNION',
+          orderBy: "-set.releaseDate",
+        })
+      ),
 
-    const yukaMorii = await retryWithBackoff(() =>
-      PokemonTCG.findCardsByQueries({
-        q: 'artist:"Yuka Morii" -set.id:mcd* supertype:"Pokémon" -subtypes:V-UNION',
-        orderBy: "-set.releaseDate",
-      })
-    );
-    const arita = await retryWithBackoff(() =>
-      PokemonTCG.findCardsByQueries({
-        q: 'artist:"Mitsuhiro Arita" -set.id:mcd* supertype:"Pokémon" -subtypes:V-UNION',
-        orderBy: "-set.releaseDate",
-      })
-    );
+      retryWithBackoff(() =>
+        PokemonTCG.findCardsByQueries({
+          q: 'artist:"Akira Egawa" -set.id:mcd* supertype:"Pokémon" -subtypes:V-UNION',
+          orderBy: "-set.releaseDate",
+        })
+      ),
 
-    const akira = await retryWithBackoff(() =>
-      PokemonTCG.findCardsByQueries({
-        q: 'artist:"Akira Egawa" -set.id:mcd* supertype:"Pokémon" -subtypes:V-UNION',
-        orderBy: "-set.releaseDate",
-      })
-    );
+      retryWithBackoff(() =>
+        PokemonTCG.findCardsByQueries({
+          q: "subtypes:EX -set.id:mcd* -subtypes:V-UNION",
+          orderBy: "-set.releaseDate",
+        })
+      ),
+      fetchPokemonCollection(),
+    ]);
 
-    const originalCollection: PokemonTCG.Card[] =
-      await fetchPokemonCollection();
-    [
-      ...marowaks,
-      ...charizards,
-      ...pikachus,
-      ...lucarios,
-      ...mewtwo,
-      ...psyduck,
-      ...sudowoodos,
-      ...totodiles,
-      ...originalCollection,
-      ...arita,
-      ...akira,
-      ...yukaMorii,
-    ].forEach((card) => {
-      uniqueCardsMap.set(card.id, card);
-    });
+    // Filter for successful promises and flatten their values
+    const filteredStaticCards = staticCards
+      .filter(
+        (result): result is PromiseFulfilledResult<PokemonTCG.Card[]> =>
+          result.status === "fulfilled"
+      )
+      .map((result) => result.value)
+      .flat()
+      .filter(
+        (card: PokemonTCG.Card, index: number, self: PokemonTCG.Card[]) =>
+          index === self.findIndex((t) => t.id === card.id)
+      );
 
-    const arrayUniqueCards = Array.from(uniqueCardsMap.values());
-
-    return arrayUniqueCards.map((card) => ({
+    return filteredStaticCards.map((card) => ({
       cardId: card.id,
     }));
-    // return cards.map((card) => ({
-    //   cardId: card.id,
-    // }));
   } catch (error) {
-    console.error("Error fetching Pokemon cards at Bones Page:", error);
+    console.error("Error fetching static Pokemon cards:", error);
     return [];
   }
 }
