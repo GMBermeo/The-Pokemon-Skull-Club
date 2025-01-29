@@ -2,83 +2,138 @@ import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
 import { loadCards } from "@lib";
 
 export async function fetchPokemonCollection(): Promise<PokemonTCG.Card[]> {
-  const cardCollections = await Promise.allSettled([
-    loadCards(1, 24),
-    loadCards(172),
-    loadCards(25, 34),
-    loadCards(173),
-    loadCards(35, 38),
-    loadCards(174),
-    loadCards(39, 42),
-    loadCards(169),
-    loadCards(42, 45),
-    loadCards(182),
-    loadCards(46, 52),
-    loadCards(863),
-    loadCards(53, 57),
-    loadCards(979),
-    loadCards(58, 62),
-    loadCards(186),
-    loadCards(63, 80),
-    loadCards(199),
-    loadCards(81, 82),
-    loadCards(462),
-    loadCards(83),
-    loadCards(865),
-    loadCards(84, 95),
-    loadCards(208),
-    loadCards(96, 105),
-    loadCards(236),
-    loadCards(106, 107),
-    loadCards(237),
-    loadCards(108),
-    loadCards(463),
-    loadCards(109, 112),
-    loadCards(464),
-    loadCards(440),
-    loadCards(113),
-    loadCards(242),
-    loadCards(114),
-    loadCards(465),
-    loadCards(115, 117),
-    loadCards(230),
-    loadCards(118, 121),
-    loadCards(439),
-    loadCards(122),
-    loadCards(866),
-    loadCards(123),
-    loadCards(212),
-    loadCards(900),
-    loadCards(238),
-    loadCards(124),
-    loadCards(239),
-    loadCards(125),
-    loadCards(466),
-    loadCards(240),
-    loadCards(126),
-    loadCards(467),
-    loadCards(127, 136),
-    loadCards(196, 197),
-    loadCards(470, 471),
-    loadCards(700),
-    loadCards(137),
-    loadCards(233),
-    loadCards(474),
-    loadCards(138, 142),
-    loadCards(446),
-    loadCards(143, 151),
-  ]);
+  const cardCollectionBase1 = await loadCards(1, 24);
+  const pichu = await loadCards(172);
+  const cardCollectionBase2 = await loadCards(25, 34);
+  const cleffa = await loadCards(173);
+  const cardCollectionBase3 = await loadCards(35, 38);
+  const igglybuff = await loadCards(174);
+  const cardCollectionBase4 = await loadCards(39, 42);
+  const crobat = await loadCards(169);
+  const cardCollectionBase5 = await loadCards(42, 45);
+  const bellossom = await loadCards(182);
+  const cardCollectionBase6 = await loadCards(46, 52);
+  const perrserker = await loadCards(863);
+  const cardCollectionBase7 = await loadCards(53, 57);
+  const annihilape = await loadCards(979);
+  const cardCollectionBase8 = await loadCards(58, 62);
+  const politoed = await loadCards(186);
+  const cardCollectionBase9 = await loadCards(63, 80);
+  const slowking = await loadCards(199);
+  const cardCollectionBase10 = await loadCards(81, 82);
+  const magnezone = await loadCards(462);
+  const cardCollectionBase11 = await loadCards(83);
+  const sirfetchd = await loadCards(865);
+  const cardCollectionBase12 = await loadCards(84, 95);
+  const steelix = await loadCards(208);
+  const cardCollectionBase13 = await loadCards(96, 105);
+  const tyrogue = await loadCards(236);
+  const cardCollectionBase14 = await loadCards(106, 107);
+  const hitmontop = await loadCards(237);
+  const cardCollectionBase15 = await loadCards(108);
+  const lickilicky = await loadCards(463);
+  const cardCollectionBase16 = await loadCards(109, 112);
+  const rhyperior = await loadCards(464);
+  const happiny = await loadCards(440);
+  const cardCollectionBase17 = await loadCards(113);
+  const blissey = await loadCards(242);
+  const cardCollectionBase18 = await loadCards(114);
+  const tangrowth = await loadCards(465);
+  const cardCollectionBase19 = await loadCards(115, 117);
+  const kingdra = await loadCards(230);
+  const cardCollectionBase20 = await loadCards(118, 121);
+  const mimeJr = await loadCards(439);
+  const cardCollectionBase21 = await loadCards(122);
+  const mrRime = await loadCards(866);
+  const cardCollectionBase22 = await loadCards(123);
+  const scizor = await loadCards(212);
+  const kleavor = await loadCards(900);
+  const smoochum = await loadCards(238);
+  const cardCollectionBase23 = await loadCards(124);
+  const elekid = await loadCards(239);
+  const cardCollectionBase24 = await loadCards(125);
+  const electivire = await loadCards(466);
+  const magby = await loadCards(240);
+  const cardCollectionBase25 = await loadCards(126);
+  const magmortar = await loadCards(467);
+  const cardCollectionBase26 = await loadCards(127, 136);
+  const espeonUmbreon = await loadCards(196, 197);
+  const leafeonGlaceon = await loadCards(470, 471);
+  const sylveon = await loadCards(700);
+  const cardCollectionBase27 = await loadCards(137);
+  const porygon2 = await loadCards(233);
+  const porygonZ = await loadCards(474);
+  const cardCollectionBase28 = await loadCards(138, 142);
+  const munchlax = await loadCards(446);
+  const cardCollectionBase29 = await loadCards(143, 151);
 
-  // Filter for successful promises and flatten their values
-  return cardCollections
-    .filter(
-      (result): result is PromiseFulfilledResult<PokemonTCG.Card[]> =>
-        result.status === "fulfilled"
-    )
-    .map((result) => result.value)
-    .flat()
-    .filter(
-      (card: PokemonTCG.Card, index: number, self: PokemonTCG.Card[]) =>
-        index === self.findIndex((t) => t.id === card.id)
-    );
+  return [
+    ...cardCollectionBase1,
+    ...pichu,
+    ...cardCollectionBase2,
+    ...cleffa,
+    ...cardCollectionBase3,
+    ...igglybuff,
+    ...cardCollectionBase4,
+    ...crobat,
+    ...cardCollectionBase5,
+    ...bellossom,
+    ...cardCollectionBase6,
+    ...perrserker,
+    ...cardCollectionBase7,
+    ...annihilape,
+    ...cardCollectionBase8,
+    ...politoed,
+    ...cardCollectionBase9,
+    ...slowking,
+    ...cardCollectionBase10,
+    ...magnezone,
+    ...cardCollectionBase11,
+    ...sirfetchd,
+    ...cardCollectionBase12,
+    ...steelix,
+    ...cardCollectionBase13,
+    ...tyrogue,
+    ...cardCollectionBase14,
+    ...hitmontop,
+    ...cardCollectionBase15,
+    ...lickilicky,
+    ...cardCollectionBase16,
+    ...rhyperior,
+    ...happiny,
+    ...cardCollectionBase17,
+    ...blissey,
+    ...cardCollectionBase18,
+    ...tangrowth,
+    ...cardCollectionBase19,
+    ...kingdra,
+    ...cardCollectionBase20,
+    ...mimeJr,
+    ...cardCollectionBase21,
+    ...mrRime,
+    ...cardCollectionBase22,
+    ...scizor,
+    ...kleavor,
+    ...smoochum,
+    ...cardCollectionBase23,
+    ...elekid,
+    ...cardCollectionBase24,
+    ...electivire,
+    ...magby,
+    ...cardCollectionBase25,
+    ...magmortar,
+    ...cardCollectionBase26,
+    ...espeonUmbreon,
+    ...leafeonGlaceon,
+    ...sylveon,
+    ...cardCollectionBase27,
+    ...porygon2,
+    ...porygonZ,
+    ...cardCollectionBase28,
+    ...munchlax,
+    ...cardCollectionBase29,
+  ].filter(
+    (card: PokemonTCG.Card, index: number, self: PokemonTCG.Card[]) =>
+      index === self.findIndex((t) => t.id === card.id)
+  );
 }

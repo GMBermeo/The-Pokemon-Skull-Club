@@ -171,6 +171,16 @@ export async function generateStaticParams() {
           q: "subtypes:BREAK -set.id:mcd* -subtypes:V-UNION",
         })
       ),
+      retryWithBackoff(() =>
+        PokemonTCG.findCardsByQueries({
+          q: "subtypes:VMAX -set.id:mcd* -subtypes:V-UNION",
+        })
+      ),
+      retryWithBackoff(() =>
+        PokemonTCG.findCardsByQueries({
+          q: "subtypes:Baby -set.id:mcd* -subtypes:V-UNION",
+        })
+      ),
       fetchPokemonCollection(),
     ]);
 

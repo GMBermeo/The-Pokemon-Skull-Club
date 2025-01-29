@@ -15,6 +15,11 @@ const routes: Route[] = [
     className: "text-red-500",
   },
   {
+    path: "/subtype",
+    label: "Subtypes",
+    className: "text-green-500",
+  },
+  {
     path: "/art/akira",
     label: "Akira Egawa's Art",
     className: "text-slate-500",
@@ -28,11 +33,6 @@ const routes: Route[] = [
     path: "/art/morii",
     label: "Yuka Morii's Art",
     className: "text-slate-500",
-  },
-  {
-    path: "/ex",
-    label: "EX Cards",
-    className: "text-grey-500",
   },
   {
     path: "/bones",

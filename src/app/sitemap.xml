@@ -30,6 +30,48 @@
         <changefreq>weekly</changefreq>
         <priority>1.0</priority>
     </url>
+    <url>
+        <loc>https://pokemon.bermeo.dev/subtype</loc>
+        <lastmod>2025-01-28T00:00:00.000Z</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://pokemon.bermeo.dev/subtype/baby</loc>
+        <lastmod>2025-01-28T00:00:00.000Z</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://pokemon.bermeo.dev/subtype/break</loc>
+        <lastmod>2025-01-28T00:00:00.000Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://pokemon.bermeo.dev/subtype/ex</loc>
+        <lastmod>2025-01-28T00:00:00.000Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://pokemon.bermeo.dev/subtype/mega</loc>
+        <lastmod>2025-01-28T00:00:00.000Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://pokemon.bermeo.dev/subtype/tag-team</loc>
+        <lastmod>2025-01-28T00:00:00.000Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://pokemon.bermeo.dev/subtype/v-max</loc>
+        <lastmod>2025-01-28T00:00:00.000Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+    </url>
     <!-- Pokemon Collection Pages -->
     <url>
         <loc>https://pokemon.bermeo.dev/bones</loc>
