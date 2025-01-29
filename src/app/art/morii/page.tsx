@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
 import { Body, CardGrid, Header } from "@components";
 import { baseMetadata, retryWithBackoff } from "@lib";
-import { sortCardsByDateAndPokedex } from "@/utils";
+import { sortCardsByDateAndPokedex } from "@utils";
 
 const metadata: Metadata = {
   ...baseMetadata,

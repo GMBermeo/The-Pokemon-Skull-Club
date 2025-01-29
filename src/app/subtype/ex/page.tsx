@@ -8,7 +8,7 @@ const metadata: Metadata = {
   ...baseMetadata,
   title: "EX Cards Collection",
   description:
-    "Discover our extensive Pokémon-EX card collection guide. Browse through powerful EX variants, ultra-rare cards, and stunning full-art designs. Features comprehensive information about every EX card release, rarity details, and collection insights.",
+    "Explore a extensive Pokémon-EX card collection guide. Browse through powerful EX variants, ultra-rare cards, and stunning full-art designs. Features comprehensive information about every EX card release, rarity details, and collection insights.",
   keywords: [
     "pokemon",
     "tcg",
@@ -21,18 +21,10 @@ const metadata: Metadata = {
   openGraph: {
     title: "EX Cards Collection",
     description:
-      "Discover our extensive Pokémon-EX card collection guide. Browse through powerful EX variants, ultra-rare cards, and stunning full-art designs. Features comprehensive information about every EX card release, rarity details, and collection insights.",
+      "Explore a extensive Pokémon-EX card collection guide. Browse through powerful EX variants, ultra-rare cards, and stunning full-art designs. Features comprehensive information about every EX card release, rarity details, and collection insights.",
     url: "https://pokemon.bermeo.dev/ex",
     section: "EX Cards",
     locale: "en_US",
-    images: [
-      {
-        url: "https://pokemon.bermeo.dev/opengraph/ex.jpg",
-        width: 800,
-        height: 450,
-        type: "image/jpeg",
-      },
-    ],
   },
 };
 
@@ -44,15 +36,10 @@ async function getData() {
   try {
     const response = await retryWithBackoff(() =>
       PokemonTCG.findCardsByQueries({
-        q: "subtypes:EX -set.id:mcd* -subtypes:V-UNION",
+        q: `subtypes:EX -set.id:mcd* -subtypes:V-UNION`,
         orderBy: "-set.releaseDate",
       })
     );
-
-    if (!response || !Array.isArray(response)) {
-      console.error("Invalid response format from Pokemon TCG API");
-      return [];
-    }
 
     return response;
   } catch (error) {
@@ -64,18 +51,15 @@ async function getData() {
 export default async function EXCardsPage() {
   const cards = await getData();
 
-  // Ensure cards is always an array
-  const safeCards = Array.isArray(cards) ? cards : [];
-
   return (
     <Body className="bg-purple-50 dark:bg-purple-950 text-purple-950">
       <Header
         title={"EX Cards"}
         subtitle={"Special & Powerful"}
-        totalCards={safeCards.length}
+        totalCards={cards.length}
         slotsPerPage={9}
       />
-      <CardGrid cardCollection={safeCards} />
+      <CardGrid cardCollection={cards} />
     </Body>
   );
 }

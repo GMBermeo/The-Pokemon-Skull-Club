@@ -96,7 +96,6 @@ export async function generateStaticParams() {
       retryWithBackoff(() =>
         PokemonTCG.findCardsByQueries({
           q: 'artist:"Akira Egawa" -set.id:mcd* supertype:"Pokémon" -subtypes:V-UNION',
-          orderBy: "-set.releaseDate",
         })
       ),
       retryWithBackoff(() =>
@@ -143,27 +142,33 @@ export async function generateStaticParams() {
       retryWithBackoff(() =>
         PokemonTCG.findCardsByQueries({
           q: 'artist:"Yuka Morii" -set.id:mcd* supertype:"Pokémon" -subtypes:V-UNION',
-          orderBy: "-set.releaseDate",
         })
       ),
       retryWithBackoff(() =>
         PokemonTCG.findCardsByQueries({
           q: 'artist:"Mitsuhiro Arita" -set.id:mcd* supertype:"Pokémon" -subtypes:V-UNION',
-          orderBy: "-set.releaseDate",
         })
       ),
 
       retryWithBackoff(() =>
         PokemonTCG.findCardsByQueries({
           q: 'artist:"Akira Egawa" -set.id:mcd* supertype:"Pokémon" -subtypes:V-UNION',
-          orderBy: "-set.releaseDate",
         })
       ),
 
       retryWithBackoff(() =>
         PokemonTCG.findCardsByQueries({
           q: "subtypes:EX -set.id:mcd* -subtypes:V-UNION",
-          orderBy: "-set.releaseDate",
+        })
+      ),
+      retryWithBackoff(() =>
+        PokemonTCG.findCardsByQueries({
+          q: "subtypes:MEGA -set.id:mcd* -subtypes:V-UNION",
+        })
+      ),
+      retryWithBackoff(() =>
+        PokemonTCG.findCardsByQueries({
+          q: "subtypes:BREAK -set.id:mcd* -subtypes:V-UNION",
         })
       ),
       fetchPokemonCollection(),
