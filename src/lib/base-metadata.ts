@@ -4,12 +4,26 @@ import { Guide, WithContext } from "schema-dts";
 export const baseMetadata: Metadata = {
   title: "Bone Club - A Private Pokémon TCG Collection",
   description:
-    "This tool was developed using the Static Site Generation (SSG) concept with Next.js in order to index some Pokemon cards for a private collection.",
+    "A comprehensive guide to the Pokémon Trading Card Game collection. Browse through rare cards, special editions, and unique artworks. Features detailed card information, high-quality images, and expert insights. Perfect for collectors and enthusiasts alike.",
   authors: [{ name: "Guilherme Bermêo", url: "https://bermeo.dev" }],
   keywords: [
     "Pokemon",
     "TCG",
     "Pokemon TCG",
+    "Trading Card Game",
+    "Bone Club",
+    "Cubone",
+    "Marowak",
+    "Pokémon",
+    "Pokémon TCG",
+    "Charizard",
+    "Pikachu",
+    "Lucario",
+    "Mewtwo",
+    "Psyduck",
+    "Sudowoodo",
+    "Totodile",
+    "Original 151",
     "HTML",
     "CSS",
     "JavaScript",
@@ -20,8 +34,11 @@ export const baseMetadata: Metadata = {
     "Brasília",
     "Roraima",
     "Guilherme Bermêo",
+    "PokeAPI",
+    "Bermêo",
     "Bermeo",
     "Tailwind CSS",
+    "Static Site Generation",
   ],
   /* manifest: "/site.webmanifest", */
   robots: "index, follow",
@@ -53,7 +70,7 @@ export const baseMetadata: Metadata = {
   openGraph: {
     title: "Pokemon TCG",
     description:
-      "This tool was developed using the Static Site Generation (SSG) concept with Next.js 15in order to index all the original 151 Pokémons and it's variations cards of the Pokémon TCG for a private collection. 🐶 The source code can be found on github and easily changed to any other parameter.",
+      "A comprehensive guide to the Pokémon Trading Card Game collection. Browse through rare cards, special editions, and unique artworks. Features detailed card information, high-quality images, and expert insights. Perfect for collectors and enthusiasts alike.",
     images: [
       {
         url: "https://pokemon.bermeo.dev/opengraph/ghost_marowak.jpg",
@@ -79,7 +96,7 @@ export const jsonLd: WithContext<Guide> = {
   about: "Pokémon TCG",
   name: "Bone Club - A Private Pokémon TCG Collection",
   url: "https://pokemon.bermeo.dev",
-  text: "This tool was developed using the Static Site Generation (SSG) concept with Next.js in order to index all the dog type cards of the Magic The Gathering for a private collection. 🐶 The source code can be found on github and easily changed to any other parameter.",
+  text: "A comprehensive guide to the Pokémon Trading Card Game collection. Browse through rare cards, special editions, and unique artworks. Features detailed card information, high-quality images, and expert insights. Perfect for collectors and enthusiasts alike.",
   reviewAspect: ["Card", "Type", "Collection"],
   image: "https://pokemon.bermeo.dev/logo.svg",
   creator: {

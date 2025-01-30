@@ -46,11 +46,12 @@ export function CardGrid({
           .join(" | ");
 
         return (
-          <div key={card.id} className="flex flex-col gap-2">
+          <div key={card.id} className="flex flex-col gap-2 max-w-full">
             <div className="text-white text-sm font-normal flex justify-between">
               <p>
-                #{card?.nationalPokedexNumbers![0]} ({card.number}/
-                {card.set.printedTotal})
+                {card?.nationalPokedexNumbers?.[0] &&
+                  `#${card.nationalPokedexNumbers[0]}`}{" "}
+                ({card.number}/{card.set.printedTotal})
               </p>
               <p>
                 ©{card.set.releaseDate.slice(0, 4)} [{indexCarta}/{totalCards}]

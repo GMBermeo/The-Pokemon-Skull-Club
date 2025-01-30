@@ -12,13 +12,7 @@ async function getData(): Promise<PokemonTCG.Card[]> {
   try {
     const response = await fetchPokemonCollection();
 
-    const cardsMap: PokemonTCG.Card[] = [...response];
-
-    const uniqueCardsMap = cardsMap.filter(
-      (card, index, self) => index === self.findIndex((t) => t.id === card.id)
-    );
-
-    return uniqueCardsMap;
+    return response;
   } catch (error) {
     console.error("Error fetching Pokemon cards at Home:", error);
     return []; // Return empty array as fallback

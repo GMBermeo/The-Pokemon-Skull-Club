@@ -9,7 +9,7 @@ const metadata: Metadata = {
   ...baseMetadata,
   title: "Bone Club - Cubones & Marowaks",
   description:
-    "'It has been seen pounding boulders with the bone it carries in order to tap out messages to others.' 🦴 This tool was developed using the SSG with Next.js 15 in order to index all the cubone and marowak cards from Pokémon TCG for a private collection. 🦴 The source code can be found on github and easily changed to any other parameter.",
+    "Discover our exclusive Cubone & Marowak Pokémon card collection guide. Explore rare variants, unique artworks, and special editions of these iconic Ground-type Pokémon. Features detailed card information and high-quality images of every Bone Club member.",
   keywords: [
     "pokemon",
     "tcg",
@@ -22,7 +22,7 @@ const metadata: Metadata = {
   openGraph: {
     title: "Bone Club - Cubones & Marowaks",
     description:
-      "'It has been seen pounding boulders with the bone it carries in order to tap out messages to others.' 🦴 This tool was developed using the SSG with Next.js 15 in order to index all the cubone and marowak cards from Pokémon TCG for a private collection. 🦴 The source code can be found on github and easily changed to any other parameter.",
+      "Discover our exclusive Cubone & Marowak Pokémon card collection guide. Explore rare variants, unique artworks, and special editions of these iconic Ground-type Pokémon. Features detailed card information and high-quality images of every Bone Club member.",
     url: "https://pokemon.bermeo.dev/bones",
     section: "Bone Club",
     locale: "en_US",

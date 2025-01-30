@@ -8,7 +8,7 @@ const metadata: Metadata = {
   ...baseMetadata,
   title: "Charizards",
   description:
-    "'Charizard flies around the sky in search of powerful opponents. It breathes intense flames that can melt any material. However, it never turns its fiery breath on any opponent weaker than itself.' 🔥 This tool was developed using the SSG with Next.js 15 in order to index all the Charizard cards from Pokémon TCG for a private collection. 🔥 The source code can be found on github and easily changed to any other parameter.",
+    "Explore our comprehensive Charizard Pokémon card collection guide. From vintage Base Set to modern releases, discover rare variants, secret rares, and iconic artworks of this legendary Fire-type Pokémon. Complete with market insights and collection tips.",
   keywords: [
     "pokemon",
     "tcg",
@@ -21,7 +21,7 @@ const metadata: Metadata = {
   openGraph: {
     title: "Charizards",
     description:
-      "'Charizard flies around the sky in search of powerful opponents. It breathes intense flames that can melt any material. However, it never turns its fiery breath on any opponent weaker than itself.' 🔥 This tool was developed using the SSG with Next.js 15 in order to index all the Charizard cards from Pokémon TCG for a private collection. 🔥 The source code can be found on github and easily changed to any other parameter.",
+      "Explore our comprehensive Charizard Pokémon card collection guide. From vintage Base Set to modern releases, discover rare variants, secret rares, and iconic artworks of this legendary Fire-type Pokémon. Complete with market insights and collection tips.",
     url: "https://pokemon.bermeo.dev/charizard",
     section: "Charizard",
     locale: "en_US",

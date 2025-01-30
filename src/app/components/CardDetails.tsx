@@ -81,7 +81,7 @@ export function CardDetails({ card }: Readonly<CardDetailsProps>): JSX.Element {
           {card.tcgplayer && (
             <div className="mt-2 bg-slate-100 dark:bg-slate-800 shadow-inner  rounded-lg p-4">
               <div className="flex justify-between">
-                <h3 className="font-bold mb-2">Market Prices</h3>
+                <h3 className="font-bold mb-2">TCGPlayer Prices</h3>
                 {card.tcgplayer.updatedAt && (
                   <h4 className="text-sm dark:text-slate-600 text-slate-400">
                     Last updated:{" "}
