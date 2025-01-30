@@ -46,7 +46,7 @@ export function CardGrid({
           .join(" | ");
 
         return (
-          <div key={card.id} className="flex flex-col gap-2">
+          <div key={card.id} className="flex flex-col gap-2 max-w-full">
             <div className="text-white text-sm font-normal flex justify-between">
               <p>
                 {card?.nationalPokedexNumbers?.[0] &&

@@ -40,9 +40,9 @@ const subtypes = [
     description:
       "Powerful team-up cards featuring two Pokémon working together",
     href: "/subtype/tag-team",
-    bgColor: "bg-red-100 dark:bg-red-900",
-    hoverColor: "hover:bg-red-200 dark:hover:bg-red-800",
-    textColor: "text-red-900 dark:text-red-100",
+    bgColor: "bg-yellow-100 dark:bg-yellow-900",
+    hoverColor: "hover:bg-yellow-200 dark:hover:bg-yellow-800",
+    textColor: "text-yellow-900 dark:text-yellow-100",
   },
   {
     name: "V-MAX",
@@ -72,9 +72,9 @@ const subtypes = [
     name: "BREAK Evolution",
     description: "Special evolution cards that break the normal rules",
     href: "/subtype/break",
-    bgColor: "bg-yellow-100 dark:bg-yellow-900",
-    hoverColor: "hover:bg-yellow-200 dark:hover:bg-yellow-800",
-    textColor: "text-yellow-900 dark:text-yellow-100",
+    bgColor: "bg-amber-100 dark:bg-amber-900",
+    hoverColor: "hover:bg-amber-200 dark:hover:bg-amber-800",
+    textColor: "text-amber-900 dark:text-amber-100",
   },
   {
     name: "EX",

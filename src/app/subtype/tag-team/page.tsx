@@ -57,7 +57,7 @@ export default async function TagTeamCardsPage() {
   const cards = await getData();
 
   return (
-    <Body className="bg-blue-50 dark:bg-blue-950 text-blue-950">
+    <Body className="bg-blue-50 dark:bg-slate-900 text-slate-950">
       <Header
         title={"TAG TEAM Cards"}
         subtitle={"Two Pokémon, One Card"}
