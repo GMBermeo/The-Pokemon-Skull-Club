@@ -181,6 +181,12 @@ export async function generateStaticParams() {
           q: "subtypes:Baby -set.id:mcd* -subtypes:V-UNION",
         })
       ),
+      retryWithBackoff(() =>
+        PokemonTCG.findCardsByQueries({
+          q: 'artist:"Asako Ito" -set.id:mcd* supertype:"Pokémon" -subtypes:V-UNION',
+          orderBy: "-set.releaseDate",
+        })
+      ),
       fetchPokemonCollection(),
     ]);
 
