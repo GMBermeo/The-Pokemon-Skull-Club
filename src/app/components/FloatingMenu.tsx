@@ -20,19 +20,9 @@ const routes: Route[] = [
     className: "text-green-500",
   },
   {
-    path: "/art/akira",
-    label: "Akira Egawa's Art",
-    className: "text-slate-500",
-  },
-  {
-    path: "/art/arita",
-    label: "Mitsuhiro Arita's Art",
-    className: "text-slate-500",
-  },
-  {
-    path: "/art/morii",
-    label: "Yuka Morii's Art",
-    className: "text-slate-500",
+    path: "/art",
+    label: "Explore by Artist",
+    className: "text-green-500",
   },
   {
     path: "/bones",
