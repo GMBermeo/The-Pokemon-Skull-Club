@@ -1,5 +1,6 @@
 import { JSX } from "react";
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
+import { BotaoEbay } from "./BotaoEbay";
 
 type CardDetailsProps = {
   card: PokemonTCG.Card;
@@ -118,6 +119,9 @@ export function CardDetails({ card }: Readonly<CardDetailsProps>): JSX.Element {
                 ) : (
                   <p>No prices available</p>
                 )}
+              </div>
+              <div className="flex justify-start">
+                <BotaoEbay card={card} />
               </div>
             </div>
           )}

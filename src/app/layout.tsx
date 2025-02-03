@@ -29,6 +29,12 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window._epn = {campaign: 5339099221};`,
+          }}
+        />
+        <script src="https://epnt.ebay.com/static/epn-smart-tools.js" />
       </head>
       <body className={inter.className}>
         {children}
