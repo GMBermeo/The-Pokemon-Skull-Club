@@ -109,14 +109,14 @@ export async function generateStaticParams() {
     ];
 
     const pokemonQueries = [
-      "nationalPokedexNumbers:[104 TO 105]",
-      "nationalPokedexNumbers:6",
-      "nationalPokedexNumbers:25",
+      "nationalPokedexNumbers:[1 TO 25]",
+      "nationalPokedexNumbers:[26 TO 50]",
+      "nationalPokedexNumbers:[51 TO 100]",
+      "nationalPokedexNumbers:[101 TO 125]",
+      "nationalPokedexNumbers:[126 TO 151]",
       "nationalPokedexNumbers:[447 TO 448]",
       "nationalPokedexNumbers:185",
       "nationalPokedexNumbers:[158 TO 160]",
-      "nationalPokedexNumbers:54",
-      "nationalPokedexNumbers:150",
     ];
 
     const subtypeQueries = [
