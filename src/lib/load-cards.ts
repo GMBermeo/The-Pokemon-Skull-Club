@@ -40,7 +40,8 @@ export async function loadCards(
   // Build a single query that includes all variants for the pokemon range
   const pokemonRange = Array.from(
     { length: totalPokemons - startPokemon + 1 },
-    (_, i) => startPokemon + i
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    (_: unknown, i: number) => startPokemon + i
   ).join(" OR nationalPokedexNumbers:");
 
   // Combine subtypes into a single OR condition
@@ -172,6 +173,7 @@ export async function loadCards(
   }
 
   // Flatten the processed cards into the final collection
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Array.from(processedPokemon.entries()).forEach(([_, typeMap]) => {
     Array.from(typeMap.values()).forEach((cards) => {
       cardCollection.push(...cards);
