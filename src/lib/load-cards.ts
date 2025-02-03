@@ -137,7 +137,7 @@ export async function loadCards(
         // Add card to its type array
         typeCards.push(card);
 
-        // Sort by price and keep only top 2 for non-MEGA cards
+        // Sort by price and keep only top 2 for non-MEGA cards, or top 1 for MEGA cards
         typeCards.sort((a, b) => {
           const aPrice = Math.max(
             a.tcgplayer?.prices?.holofoil?.market ?? 0,
@@ -150,8 +150,13 @@ export async function loadCards(
           return bPrice - aPrice;
         });
 
-        // Only limit non-MEGA cards to 2
-        if (cardType !== "mega" && typeCards.length > 2) {
+        // Limit cards based on type
+        if (cardType === "mega" && typeCards.length > 1) {
+          // Keep only the cheapest MEGA card
+          typeCards.length = 1;
+          typeCards.reverse(); // Reverse to keep the cheapest one
+        } else if (cardType !== "mega" && typeCards.length > 2) {
+          // Keep top 2 for non-MEGA cards
           typeCards.length = 2;
         }
       }
