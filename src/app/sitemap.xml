@@ -122,6 +122,12 @@
 
     <!-- Artist Pages -->
     <url>
+        <loc>https://pokemon.bermeo.dev/art</loc>
+        <lastmod>2025-02-03T00:00:00.000Z</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
         <loc>https://pokemon.bermeo.dev/art/akira</loc>
         <lastmod>2025-01-28T00:00:00.000Z</lastmod>
         <changefreq>monthly</changefreq>
@@ -133,6 +139,67 @@
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
+    <url>
+        <loc>https://pokemon.bermeo.dev/art/asaka</loc>
+        <lastmod>2025-02-03T00:00:00.000Z</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://pokemon.bermeo.dev/art/mekayu</loc>
+        <lastmod>2025-02-03T00:00:00.000Z</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://pokemon.bermeo.dev/art/mingo</loc>
+        <lastmod>2025-02-03T00:00:00.000Z</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://pokemon.bermeo.dev/art/narano</loc>
+        <lastmod>2025-02-03T00:00:00.000Z</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://pokemon.bermeo.dev/art/osare</loc>
+        <lastmod>2025-02-03T00:00:00.000Z</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://pokemon.bermeo.dev/art/rond</loc>
+        <lastmod>2025-02-03T00:00:00.000Z</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://pokemon.bermeo.dev/art/saboteri</loc>
+        <lastmod>2025-02-03T00:00:00.000Z</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://pokemon.bermeo.dev/art/yukichi</loc>
+        <lastmod>2025-02-03T00:00:00.000Z</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://pokemon.bermeo.dev/art/yukihiro</loc>
+        <lastmod>2025-02-03T00:00:00.000Z</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://pokemon.bermeo.dev/art/yuriko</loc>
+        <lastmod>2025-02-03T00:00:00.000Z</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+
 
     <!-- Static Card Pages -->
 

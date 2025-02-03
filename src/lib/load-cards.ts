@@ -33,95 +33,155 @@ export async function loadCards(
   startPokemon: number,
   finalPokemon?: number
 ): Promise<PokemonTCG.Card[]> {
-  const subtypes = [
-    "EX hp:[200 TO *]",
-    "V",
-    "GX",
-    "MEGA",
-    "VMAX",
-    "TAG",
-    // "Basic",
-  ];
-  const regions: string[] = ["alola*", "galar*", "hisui*", "paldea*"];
-
+  const subtypes = ["EX hp:[200 TO *]", "V", "GX", "MEGA", "VMAX", "TAG"];
+  const regions = ["alola*", "galar*", "hisui*", "paldea*"];
   const totalPokemons: number = finalPokemon ?? startPokemon;
 
-  // const conflictFilter: string = `(-subtypes:${subtypes
-  //   .map((subtype) => `${subtype}`)
-  //   .join(" AND -subtypes:")})
-  //   (-name:${regions.map((region) => `${region}`).join(" AND -name:")})`;
+  // Build a single query that includes all variants for the pokemon range
+  const pokemonRange = Array.from(
+    { length: totalPokemons - startPokemon + 1 },
+    (_, i) => startPokemon + i
+  ).join(" OR nationalPokedexNumbers:");
 
-  const paramsArray: PokemonTCG.Parameter[] = [];
+  // Combine subtypes into a single OR condition
+  const subtypesQuery = subtypes
+    .map((subtype) => `subtypes:${subtype}`)
+    .join(" OR ");
 
-  // Add the parameters for the first query
-  for (let i = startPokemon; i <= totalPokemons; i++) {
-    const params: PokemonTCG.Parameter = {
-      q: `nationalPokedexNumbers:${i} ${generalFilter}`,
-      pageSize: 1,
+  // Combine regions into a single OR condition
+  const regionsQuery = regions.map((region) => `name:${region}`).join(" OR ");
+
+  // Create the main query that combines everything - removed generalFilter from base query
+  const mainQuery = `nationalPokedexNumbers:${pokemonRange}`;
+  const variantsQuery = `(nationalPokedexNumbers:${pokemonRange}) ${generalFilter} (${subtypesQuery} OR ${regionsQuery})`;
+
+  const queries = [
+    {
+      q: mainQuery,
+      pageSize: (totalPokemons - startPokemon + 1) * 10,
       orderBy:
-        "rarity, tcgplayer.prices.normal.market, tcgplayer.prices.holofoil.market",
-    };
-    paramsArray.push(params);
-  }
-
-  // Add the parameters for subtypes
-  for (const subtype of subtypes) {
-    for (let i = startPokemon; i <= totalPokemons; i++) {
-      const params: PokemonTCG.Parameter = {
-        q: `nationalPokedexNumbers:${i} ${generalFilter} subtypes:${subtype}`,
-        pageSize: 1,
-        orderBy:
-          "rarity, tcgplayer.prices.normal.market, tcgplayer.prices.holofoil.market",
-      };
-      paramsArray.push(params);
-    }
-  }
-
-  // Add the parameters for regions
-  for (const region of regions) {
-    for (let i = startPokemon; i <= totalPokemons; i++) {
-      const params: PokemonTCG.Parameter = {
-        q: `nationalPokedexNumbers:${i} ${generalFilter} name:${region}`,
-        pageSize: 1,
-        orderBy: "rarity, tcgplayer.prices.market",
-      };
-      paramsArray.push(params);
-    }
-  }
+        "-tcgplayer.prices.holofoil.market,-tcgplayer.prices.normal.market",
+    },
+    {
+      q: variantsQuery,
+      pageSize: (totalPokemons - startPokemon + 1) * 10,
+      orderBy:
+        "-tcgplayer.prices.holofoil.market,-tcgplayer.prices.normal.market",
+    },
+  ];
 
   const cardCollection: PokemonTCG.Card[] = [];
-  const cardIds = new Set<string>(); // Create a Set to track unique card IDs
+  const processedPokemon = new Map<number, Map<string, PokemonTCG.Card[]>>();
 
-  // Update the card fetching loop
-  for (const params of paramsArray) {
+  for (const params of queries) {
     try {
-      const response: PokemonTCG.Card[] = await retryWithBackoff(() =>
+      const response = await retryWithBackoff(() =>
         PokemonTCG.findCardsByQueries(params)
       );
-      const card: PokemonTCG.Card = response[0];
-      if (card && !cardIds.has(card.id)) {
-        cardCollection.push(card);
-        cardIds.add(card.id);
+
+      for (const card of response) {
+        const pokedexNumber = card.nationalPokedexNumbers?.[0];
+        if (!pokedexNumber) continue;
+
+        // Skip cards that don't match our filters for the base query
+        if (
+          params.q === mainQuery &&
+          !card.name.includes("-") &&
+          card.subtypes?.some(
+            (subtype) =>
+              subtypes.some((s) => s.split(" ")[0] === subtype) ||
+              regions.some((r) =>
+                card.name.toLowerCase().includes(r.replace("*", ""))
+              )
+          )
+        ) {
+          continue;
+        }
+
+        // Determine the card type (base, variant, or region)
+        let cardType = "base";
+        const isMega =
+          card.subtypes?.some((subtype) => subtype === "MEGA") ?? false;
+
+        if (
+          subtypes.some((subtype) => {
+            const subtypeValue = subtype.split(" ")[0];
+            return card.subtypes?.some(
+              (cardSubtype) =>
+                cardSubtype === subtypeValue ||
+                (subtype.includes("EX") && cardSubtype === "EX")
+            );
+          })
+        ) {
+          cardType = isMega ? "mega" : "variant";
+        } else if (
+          regions.some((region) =>
+            card.name.toLowerCase().includes(region.replace("*", ""))
+          )
+        ) {
+          cardType = "region";
+        }
+
+        // Initialize maps if needed
+        if (!processedPokemon.has(pokedexNumber)) {
+          processedPokemon.set(pokedexNumber, new Map());
+        }
+        const pokemonTypes = processedPokemon.get(pokedexNumber)!;
+        if (!pokemonTypes.has(cardType)) {
+          pokemonTypes.set(cardType, []);
+        }
+
+        const typeCards = pokemonTypes.get(cardType)!;
+
+        // Add card to its type array
+        typeCards.push(card);
+
+        // Sort by price and keep only top 2 for non-MEGA cards
+        typeCards.sort((a, b) => {
+          const aPrice = Math.max(
+            a.tcgplayer?.prices?.holofoil?.market ?? 0,
+            a.tcgplayer?.prices?.normal?.market ?? 0
+          );
+          const bPrice = Math.max(
+            b.tcgplayer?.prices?.holofoil?.market ?? 0,
+            b.tcgplayer?.prices?.normal?.market ?? 0
+          );
+          return bPrice - aPrice;
+        });
+
+        // Only limit non-MEGA cards to 2
+        if (cardType !== "mega" && typeCards.length > 2) {
+          typeCards.length = 2;
+        }
       }
     } catch (error: unknown) {
-      if ((error as ApiError).response?.status == 404) {
+      if ((error as ApiError).response?.status === 404) {
         console.error(
-          "Error fetching card, skipping:",
+          "Error fetching cards, skipping:",
           params.q,
           (error as ApiError).response?.status
         );
-        break;
+        continue;
       }
-      if ((error as ApiError).response?.status != 429) {
-        console.error(
-          "Error fetching card:",
-          params.q,
-          (error as ApiError).response?.status
-        );
-      }
-      continue;
+      console.error(
+        "Error fetching cards:",
+        params.q,
+        (error as ApiError).response?.status ?? error
+      );
     }
   }
 
-  return cardCollection;
+  // Flatten the processed cards into the final collection
+  Array.from(processedPokemon.entries()).forEach(([_, typeMap]) => {
+    Array.from(typeMap.values()).forEach((cards) => {
+      cardCollection.push(...cards);
+    });
+  });
+
+  // Sort by national pokedex number to maintain order
+  return cardCollection.sort((a, b) => {
+    const aNum = a.nationalPokedexNumbers?.[0] ?? 0;
+    const bNum = b.nationalPokedexNumbers?.[0] ?? 0;
+    return aNum - bNum;
+  });
 }
