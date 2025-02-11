@@ -7,13 +7,13 @@ import { sortCardsByDateAndPokedex } from "@utils";
 
 const metadata: Metadata = {
   ...baseMetadata,
-  title: "Narano's Art",
+  title: "USGMEN's Art",
   description:
-    "Browse narano's distinctive Pokémon card artwork collection. Experience their unique rounded, cartoonish style that brings personality to each Pokémon, as showcased in their debut with Tatsugiri and Durant ex. Features their complete gallery of illustrations with detailed card information and high-quality images.",
+    "Browse USGMEN's whimsical Pokémon card artwork collection. Experience their unique style featuring simple yet expressive faces with dot eyes and straight-line mouths, bringing a fresh and cute perspective to Pokémon illustrations. Features their complete gallery of illustrations with detailed card information and high-quality images.",
   keywords: [
     "pokemon",
     "tcg",
-    "narano",
+    "usgmen",
     "art",
     "illustration",
     "pokemon tcg",
@@ -21,10 +21,10 @@ const metadata: Metadata = {
     "illustrator",
   ],
   openGraph: {
-    title: "narano's Pokémon Card Art",
+    title: "USGMEN's Pokémon Card Art",
     description:
-      "Browse narano's distinctive Pokémon card artwork collection. Experience their unique rounded, cartoonish style that brings personality to each Pokémon, as showcased in their debut with Tatsugiri and Durant ex. Features their complete gallery of illustrations with detailed card information and high-quality images.",
-    url: "https://pokemon.bermeo.dev/art/narano",
+      "Browse USGMEN's whimsical Pokémon card artwork collection. Experience their unique style featuring simple yet expressive faces with dot eyes and straight-line mouths, bringing a fresh and cute perspective to Pokémon illustrations. Features their complete gallery of illustrations with detailed card information and high-quality images.",
+    url: "https://pokemon.bermeo.dev/art/usgmen",
     section: "Artist Gallery",
     locale: "en_US",
   },
@@ -38,25 +38,25 @@ async function getData() {
   try {
     const response = await retryWithBackoff(() =>
       PokemonTCG.findCardsByQueries({
-        q: 'artist:"narano" -set.id:mcd* supertype:"Pokémon" -subtypes:V-UNION',
+        q: 'artist:"USGMEN" -set.id:mcd* supertype:"Pokémon" -subtypes:V-UNION',
         orderBy: "-set.releaseDate",
       })
     );
 
     return sortCardsByDateAndPokedex(response);
   } catch (error) {
-    console.error("Error fetching Pokemon cards at narano Page:", error);
+    console.error("Error fetching Pokemon cards at USGMEN Page:", error);
     return [];
   }
 }
 
-export default async function NaranoPage() {
+export default async function USGMENPage() {
   const cards = await getData();
 
   return (
     <Body>
       <Header
-        title={"narano"}
+        title={"USGMEN"}
         subtitle={"Pokémon Card Artist"}
         totalCards={cards.length}
         slotsPerPage={9}
