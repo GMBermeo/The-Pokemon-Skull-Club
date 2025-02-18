@@ -14,7 +14,7 @@ async function getData(pokedexNumber: string): Promise<PokemonTCG.Card[]> {
   try {
     const response = await retryWithBackoff(() =>
       PokemonTCG.findCardsByQueries({
-        q: `nationalPokedexNumbers:${pokedexNumber} -set.id:mcd* -rarity:*rainbow* -rarity:*common* -subtypes:V-UNION `,
+        q: `nationalPokedexNumbers:${pokedexNumber} -set.id:mcd* -rarity:*common* -rarity:*rainbow* -subtypes:V-UNION `,
         orderBy: "-set.releaseDate",
       })
     );
@@ -41,15 +41,57 @@ export async function generateMetadata({
     return baseMetadata;
   }
 
-  const pokemonName = cards[0].name.split(" ")[0]; // Get base name without modifiers
+  const pokemonName: string = cards[0].name.split(" ")[0];
+  const flavorText: string = cards[0]?.flavorText ?? "";
+  const artist: string = cards[0]?.artist ?? "";
+  const rarity: string = cards[0]?.rarity ?? "";
+  const setName: string = cards[0]?.set.name ?? "";
+  const abilities: string =
+    cards[0]?.abilities?.map((ability) => ability.name).join(", ") ?? "";
+  const attacks: string =
+    cards[0]?.attacks
+      ?.map((attack) => `${attack.name} (${attack.damage} damage)`)
+      .join(", ") ?? "";
+  const weaknesses: string =
+    cards[0]?.weaknesses
+      ?.map((weakness) => `weak to ${weakness.type}`)
+      .join(", ") ?? "";
+  const resistances: string =
+    cards[0]?.resistances
+      ?.map((resistance) => `resistant to ${resistance.type}`)
+      .join(", ") ?? "";
+  const evolvesFrom: string = cards[0].evolvesFrom
+    ? `evolves from ${cards[0].evolvesFrom}`
+    : "";
+  const evolvesTo: string = cards[0].evolvesTo?.[0]
+    ? `evolves to ${cards[0].evolvesTo[0]}`
+    : "";
+  const hp: string = cards[0].hp ? `HP ${cards[0].hp}` : "";
+  const set: string = cards[0].set.name ? `set ${cards[0].set.name}` : "";
+  const subtypes: string = cards[0].subtypes?.join(", ") ?? "";
+  const types: string = cards[0].types?.join(", ") ?? "";
 
   return {
     ...baseMetadata,
     title: `#${resolvedParams.nationalPokedexNumber} ${pokemonName} - Pokémon Cards`,
-    description: `Explore all ${pokemonName} (#${resolvedParams.nationalPokedexNumber}) Pokémon trading cards. View different variants, artworks, and special editions.`,
+    description: `Explore all ${pokemonName} (#${resolvedParams.nationalPokedexNumber}) Pokémon trading cards. ${flavorText}`,
     keywords: [
       pokemonName,
       `#${resolvedParams.nationalPokedexNumber}`,
+      flavorText,
+      artist,
+      rarity,
+      setName,
+      abilities,
+      attacks,
+      weaknesses,
+      resistances,
+      evolvesFrom,
+      evolvesTo,
+      hp,
+      set,
+      subtypes,
+      types,
       "pokemon",
       "tcg",
       "pokemon tcg",
@@ -63,7 +105,7 @@ export async function generateMetadata({
     ],
     openGraph: {
       title: `#${resolvedParams.nationalPokedexNumber} ${pokemonName} - Pokémon Cards`,
-      description: `Explore all ${pokemonName} (#${resolvedParams.nationalPokedexNumber}) Pokémon trading cards. View different variants, artworks, and special editions.`,
+      description: `Explore all ${pokemonName} (#${resolvedParams.nationalPokedexNumber}) rare Pokémon trading cards. ${flavorText}`,
       url: `https://pokemon.bermeo.dev/pokedex/${resolvedParams.nationalPokedexNumber}`,
       section: pokemonName,
       images: cards[0]
@@ -82,11 +124,12 @@ export async function generateMetadata({
 }
 
 export async function generateStaticParams() {
-  // Generate static params for the first 151 Pokemon plus some special ones
-  const baseNumbers = Array.from({ length: 151 }, (_, i) => (i + 1).toString());
-  const specialNumbers = ["447", "448", "185", "158", "159", "160"];
+  // Generate static params for all 1025 pokemons
+  const pokemonNumbers: string[] = Array.from({ length: 1025 }, (_, i) =>
+    (i + 1).toString()
+  );
 
-  return [...baseNumbers, ...specialNumbers].map((number) => ({
+  return pokemonNumbers.map((number) => ({
     nationalPokedexNumber: number,
   }));
 }
@@ -94,11 +137,13 @@ export async function generateStaticParams() {
 export default async function PokemonPage({
   params,
 }: Readonly<{
-  params: Promise<{ nationalPokedexNumber: string }>;
+  params: Promise<Params>;
 }>) {
-  const resolvedParams = await params;
-  const cards = await getData(resolvedParams.nationalPokedexNumber);
-  const pokemonName =
+  const resolvedParams: Params = await params;
+  const cards: PokemonTCG.Card[] = await getData(
+    resolvedParams.nationalPokedexNumber
+  );
+  const pokemonName: string =
     cards[0]?.name.split(" ")[0] ||
     `Pokemon #${resolvedParams.nationalPokedexNumber}`;
 
