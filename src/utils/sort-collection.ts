@@ -20,3 +20,14 @@ export function sortCardsByDateAndPokedex(
     return dateComparison;
   });
 }
+
+export function sortCardsByDexNumber(
+  cards: PokemonTCG.Card[]
+): PokemonTCG.Card[] {
+  return cards.sort((a: PokemonTCG.Card, b: PokemonTCG.Card) => {
+    return (
+      (a.nationalPokedexNumbers?.[0] ?? 0) -
+      (b.nationalPokedexNumbers?.[0] ?? 0)
+    );
+  });
+}
