@@ -1,4 +1,4 @@
-import React from "react";
+import React, { JSX } from "react";
 import Link from "next/link";
 
 interface HeaderProps {
@@ -8,7 +8,7 @@ interface HeaderProps {
   slotsPerPage?: number;
 }
 
-export const Header = (props: HeaderProps) => {
+export const Header = (props: HeaderProps): JSX.Element => {
   return (
     <div className="font-bold space-y-2 mb-4 justify-between flex flex-col md:flex-row w-full">
       <div>

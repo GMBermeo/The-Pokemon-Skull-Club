@@ -1,5 +1,5 @@
 "use server";
-import { Suspense } from "react";
+import { JSX, Suspense } from "react";
 import { Metadata } from "next";
 import Link from "next/link";
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
@@ -90,7 +90,11 @@ export async function generateMetadata({
   return metadataObj;
 }
 
-export async function generateStaticParams() {
+export async function generateStaticParams(): Promise<
+  {
+    cardId: string;
+  }[]
+> {
   try {
     const artistQueries = [
       'artist:"Akira Egawa"',
@@ -178,7 +182,7 @@ export default async function CardPage({
   params,
 }: Readonly<{
   params: Promise<{ cardId: string }>;
-}>) {
+}>): Promise<JSX.Element> {
   const resolvedParams = await params;
   const card: PokemonTCG.Card | undefined = await getData(
     resolvedParams.cardId

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, JSX } from "react";
 import Link from "next/link";
 
 interface Route {
@@ -46,7 +46,7 @@ const routes: Route[] = [
   },
 ];
 
-export const FloatingMenu = () => {
+export const FloatingMenu = (): JSX.Element => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (

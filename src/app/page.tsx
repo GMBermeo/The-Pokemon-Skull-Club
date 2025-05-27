@@ -1,4 +1,5 @@
 "use server";
+import { JSX } from "react";
 import { Metadata } from "next";
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
 import { Body, CardGrid, Header } from "@components";
@@ -19,7 +20,7 @@ async function getData(): Promise<PokemonTCG.Card[]> {
   }
 }
 
-export default async function HomePage() {
+export default async function HomePage(): Promise<JSX.Element> {
   const cards = await getData();
 
   return (

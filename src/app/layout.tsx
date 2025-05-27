@@ -1,9 +1,10 @@
 "use server";
+import "./globals.css";
+import { JSX } from "react";
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import Script from "next/script";
 import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
-import { Inter } from "next/font/google";
-import "./globals.css";
 import { baseMetadata, jsonLd } from "@lib";
 import { FloatingMenu } from "@components";
 
@@ -17,7 +18,7 @@ export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>): Promise<JSX.Element> {
   return (
     <html lang="en">
       <head>

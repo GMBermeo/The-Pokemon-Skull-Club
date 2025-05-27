@@ -1,4 +1,5 @@
 "use server";
+import { JSX } from "react";
 import { Metadata } from "next";
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
 import { Body, CardGrid, Header } from "@components";
@@ -38,7 +39,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return metadata;
 }
 
-async function getData() {
+async function getData(): Promise<PokemonTCG.Card[]> {
   try {
     const response = await retryWithBackoff(() =>
       PokemonTCG.findCardsByQueries({
@@ -54,7 +55,7 @@ async function getData() {
   }
 }
 
-export default async function AsakoItoPage() {
+export default async function AsakoItoPage(): Promise<JSX.Element> {
   const cards = await getData();
 
   return (

@@ -1,4 +1,5 @@
 "use server";
+import { JSX } from "react";
 import { Metadata } from "next";
 import Link from "next/link";
 import { Body } from "@components";
@@ -86,7 +87,7 @@ const subtypes = [
   },
 ];
 
-export default async function SubtypePage() {
+export default async function SubtypePage(): Promise<JSX.Element> {
   return (
     <Body className="bg-gray-50 dark:bg-gray-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

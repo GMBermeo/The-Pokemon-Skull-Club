@@ -1,5 +1,5 @@
 "use server";
-import { Suspense } from "react";
+import { JSX, Suspense } from "react";
 import { Metadata } from "next";
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
 import { Body, CardGrid, Header } from "@components";
@@ -123,7 +123,11 @@ export async function generateMetadata({
   };
 }
 
-export async function generateStaticParams() {
+export async function generateStaticParams(): Promise<
+  {
+    nationalPokedexNumber: string;
+  }[]
+> {
   // Generate static params for all 1025 pokemons
   const pokemonNumbers: string[] = Array.from({ length: 1025 }, (_, i) =>
     (i + 1).toString()
@@ -138,7 +142,7 @@ export default async function PokemonPage({
   params,
 }: Readonly<{
   params: Promise<Params>;
-}>) {
+}>): Promise<JSX.Element> {
   const resolvedParams: Params = await params;
   const cards: PokemonTCG.Card[] = await getData(
     resolvedParams.nationalPokedexNumber
