@@ -1,23 +1,25 @@
-"use server";
-import { JSX } from "react";
-import { Metadata } from "next";
-import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
+import {use, type JSX } from "react";
+import type { Metadata } from "next";
+import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
 import { Body, CardGrid, Header } from "@components";
 import { baseMetadata, retryWithBackoff } from "@lib";
 import { sortCardsByDexNumber } from "@utils";
 
-export async function generateMetadata(): Promise<Metadata> {
+export function generateMetadata(): Metadata {
   return baseMetadata;
 }
 
 async function loadCards(
   startNum: number,
   endNum?: number
-): Promise<PokemonTCG.Card[]> {
+): Promise<PokemonTCG.ICard[]> {
+const startNumString = String(startNum);
+const endNumString = endNum ? String(endNum) : "";
+
   try {
     const query = endNum
-      ? `nationalPokedexNumbers:[${startNum} TO ${endNum}] -set.id:mcd* -rarity:*common* -rarity:*rainbow* -subtypes:V-UNION -subtypes:BREAK`
-      : `nationalPokedexNumbers:${startNum} -set.id:mcd* -rarity:*common* -rarity:*rainbow* -subtypes:V-UNION -subtypes:BREAK`;
+      ? `nationalPokedexNumbers:[${startNumString} TO ${endNumString}] -set.id:mcd* -rarity:*common* -rarity:*rainbow* -subtypes:V-UNION -subtypes:BREAK`
+      : `nationalPokedexNumbers:${startNumString} -set.id:mcd* -rarity:*common* -rarity:*rainbow* -subtypes:V-UNION -subtypes:BREAK`;
 
     const response = await retryWithBackoff(() =>
       PokemonTCG.findCardsByQueries({
@@ -26,12 +28,12 @@ async function loadCards(
     );
     return response;
   } catch (error) {
-    console.error(`Error fetching Pokemon cards ${startNum}-${endNum}:`, error);
+    console.error(`Error fetching Pokemon cards ${startNumString}-${endNumString}:`, error);
     return [];
   }
 }
 
-async function getData(): Promise<PokemonTCG.Card[]> {
+async function getData(): Promise<PokemonTCG.ICard[]> {
   try {
     const cardCollectionBase1 = sortCardsByDexNumber(await loadCards(1, 24));
     const pichu = sortCardsByDexNumber(await loadCards(172));
@@ -189,8 +191,8 @@ async function getData(): Promise<PokemonTCG.Card[]> {
   }
 }
 
-export default async function PrivateCollectionPage(): Promise<JSX.Element> {
-  const cards = await getData();
+export default function PrivateCollectionPage(): JSX.Element {
+  const cards = use(getData());
 
   return (
     <Body>

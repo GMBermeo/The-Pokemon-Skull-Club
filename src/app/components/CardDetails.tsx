@@ -1,10 +1,10 @@
-import { JSX } from "react";
-import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
+import type { JSX } from "react";
+import type { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
 import { BotaoEbay } from "./BotaoEbay";
 
-type CardDetailsProps = {
-  card: PokemonTCG.Card;
-};
+interface CardDetailsProps {
+  card: PokemonTCG.ICard;
+}
 
 export function CardDetails({ card }: Readonly<CardDetailsProps>): JSX.Element {
   // Format price function (reused from CardGrid)
@@ -15,12 +15,12 @@ export function CardDetails({ card }: Readonly<CardDetailsProps>): JSX.Element {
   // Build price display
   const prices = {
     normal: {
-      high: formatPrice(card.tcgplayer?.prices?.normal?.high),
-      market: formatPrice(card.tcgplayer?.prices?.normal?.market),
+      high: formatPrice(card.tcgplayer?.prices.normal?.high),
+      market: formatPrice(card.tcgplayer?.prices.normal?.market),
     },
     holofoil: {
-      high: formatPrice(card.tcgplayer?.prices?.holofoil?.high),
-      market: formatPrice(card.tcgplayer?.prices?.holofoil?.market),
+      high: formatPrice(card.tcgplayer?.prices.holofoil?.high),
+      market: formatPrice(card.tcgplayer?.prices.holofoil?.market),
     },
   };
 
@@ -156,8 +156,8 @@ export function CardDetails({ card }: Readonly<CardDetailsProps>): JSX.Element {
             {card.ancientTrait?.name && (
               <div className="flex">
                 <dt className="font-medium min-w-24">Ancient Trait:</dt>
-                <dd>{card.ancientTrait?.name}</dd>
-                <dd>{card.ancientTrait?.text}</dd>
+                <dd>{card.ancientTrait.name}</dd>
+                <dd>{card.ancientTrait.text}</dd>
               </div>
             )}
           </dl>
@@ -167,8 +167,8 @@ export function CardDetails({ card }: Readonly<CardDetailsProps>): JSX.Element {
         {card.abilities && card.abilities.length > 0 && (
           <div className="bg-slate-100 dark:bg-slate-700 rounded-lg p-4">
             <h3 className="font-bold mb-2">Abilities</h3>
-            {card.abilities.map((ability, index) => (
-              <div key={index} className="mb-2">
+            {card.abilities.map((ability) => (
+              <div key={ability.name} className="mb-2">
                 <p className="font-semibold">
                   {ability.name} ({ability.type})
                 </p>
@@ -182,8 +182,8 @@ export function CardDetails({ card }: Readonly<CardDetailsProps>): JSX.Element {
         {card.attacks && card.attacks.length > 0 && (
           <div className="bg-slate-100 dark:bg-slate-700 rounded-lg p-4">
             <h3 className="font-bold mb-2">Attacks</h3>
-            {card.attacks.map((attack, index) => (
-              <div key={index} className="mb-3">
+            {card.attacks.map((attack) => (
+              <div key={attack.name} className="mb-3">
                 <div className="flex justify-between items-center">
                   <p className="font-semibold">{attack.name}</p>
                   <p className="text-sm">
@@ -230,14 +230,14 @@ export function CardDetails({ card }: Readonly<CardDetailsProps>): JSX.Element {
         </div>
 
         {/* Rules and Flavor Text */}
-        {(card.rules || card.flavorText) && (
+        {(card.rules ?? card.flavorText) && (
           <div className="bg-slate-100 dark:bg-slate-700 rounded-lg p-4">
             {card.rules && (
               <>
                 <h3 className="font-bold mb-2">Rules</h3>
                 <ul className="list-disc list-inside text-sm mb-4">
-                  {card.rules.map((rule, index) => (
-                    <li key={index}>{rule}</li>
+                  {card.rules.map((rule) => (
+                    <li key={rule}>{rule}</li>
                   ))}
                 </ul>
               </>
@@ -253,24 +253,20 @@ export function CardDetails({ card }: Readonly<CardDetailsProps>): JSX.Element {
         {/* API */}
         <div className="bg-slate-100 dark:bg-slate-900 text-slate-100 rounded-lg p-4">
           <dl className="grid gap-2 text-sm">
-            {card.supertype && (
-              <div className="flex">
-                <dt className="font-medium min-w-24">Supertype:</dt>
-                <dd>{card.supertype}</dd>
-              </div>
-            )}
+            <div className="flex">
+              <dt className="font-medium min-w-24">Supertype:</dt>
+              <dd>{card.supertype}</dd>
+            </div>
             {card.types && (
               <div className="flex">
                 <dt className="font-medium min-w-24">Types:</dt>
                 <dd>{card.types.join(", ")}</dd>
               </div>
             )}
-            {card.subtypes && (
-              <div className="flex">
-                <dt className="font-medium min-w-24">Subtypes:</dt>
-                <dd>{card.subtypes.join(", ")}</dd>
-              </div>
-            )}
+            <div className="flex">
+              <dt className="font-medium min-w-24">Subtypes:</dt>
+              <dd>{card.subtypes.join(", ")}</dd>
+            </div>
           </dl>
         </div>
       </div>

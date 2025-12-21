@@ -1,7 +1,6 @@
-"use server";
-import { JSX } from "react";
-import { Metadata } from "next";
-import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
+import { use, type JSX } from "react";
+import type { Metadata } from "next";
+import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
 import { Body, CardGrid, Header } from "@components";
 import { baseMetadata, retryWithBackoff } from "@lib";
 import { sortCardsByDateAndPokedex } from "@utils";
@@ -31,11 +30,11 @@ const metadata: Metadata = {
   },
 };
 
-export async function generateMetadata(): Promise<Metadata> {
+export function generateMetadata(): Metadata {
   return metadata;
 }
 
-async function getData(): Promise<PokemonTCG.Card[]> {
+async function getData(): Promise<PokemonTCG.ICard[]> {
   try {
     const response = await retryWithBackoff(() =>
       PokemonTCG.findCardsByQueries({
@@ -54,8 +53,8 @@ async function getData(): Promise<PokemonTCG.Card[]> {
   }
 }
 
-export default async function MitsuhiroAritaPage(): Promise<JSX.Element> {
-  const cards = await getData();
+export default function MitsuhiroAritaPage(): JSX.Element {
+  const cards = use(getData());
 
   return (
     <Body>

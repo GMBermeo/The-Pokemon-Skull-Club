@@ -1,4 +1,4 @@
-import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
+import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
 
 interface ApiError extends Error {
   response?: {
@@ -15,24 +15,31 @@ export async function retryWithBackoff<T>(
     return await fn();
   } catch (error) {
     const apiError = error as ApiError;
-    if (retries === 0 || apiError?.response?.status !== 429) {
+    const status = apiError.response?.status;
+    
+    // Retry on rate limit (429) or server errors (5xx)
+    const isRetryable = status === 429 || (status !== undefined && status >= 500 && status < 600);
+    
+    if (retries === 0 || !isRetryable) {
       throw error;
     }
-    const delay =
-      baseDelay * 100 ** (3 - retries) * (0.9 + Math.random() * 0.2);
-    console.log(`Rate limited. Retrying in ${Math.round(delay)}ms...`);
+    
+    const delay = baseDelay * 2 ** (3 - retries) * (0.9 + Math.random() * 0.2);
+    const reason = status === 429 ? "Rate limited" : `Server error (${String(status)})`;
+    console.log(`${reason}. Retrying in ${String(Math.round(delay))}ms...`);
 
+    await new Promise((resolve) => setTimeout(resolve, delay));
     return retryWithBackoff(fn, retries - 1, baseDelay);
   }
 }
 
-export const generalFilter: string =
+export const generalFilter =
   "-set.id:ru* -set.id:mcd* -set.id:ecard* -rarity:*rainbow* (-subtypes:BREAK AND -subtypes:V-UNION)";
 
 export async function loadCards(
   startPokemon: number,
   finalPokemon?: number
-): Promise<PokemonTCG.Card[]> {
+): Promise<PokemonTCG.ICard[]> {
   const subtypes = ["EX hp:[200 TO *]", "V", "GX", "MEGA", "VMAX", "TAG"];
   const regions = ["alola*", "galar*", "hisui*", "paldea*"];
   const totalPokemons: number = finalPokemon ?? startPokemon;
@@ -40,7 +47,7 @@ export async function loadCards(
   // Build a single query that includes all variants for the pokemon range
   const pokemonRange = Array.from(
     { length: totalPokemons - startPokemon + 1 },
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+     
     (_: unknown, i: number) => startPokemon + i
   ).join(" OR nationalPokedexNumbers:");
 
@@ -71,8 +78,8 @@ export async function loadCards(
     },
   ];
 
-  const cardCollection: PokemonTCG.Card[] = [];
-  const processedPokemon = new Map<number, Map<string, PokemonTCG.Card[]>>();
+  const cardCollection: PokemonTCG.ICard[] = [];
+  const processedPokemon = new Map<number, Map<string, PokemonTCG.ICard[]>>();
 
   for (const params of queries) {
     try {
@@ -102,12 +109,12 @@ export async function loadCards(
         // Determine the card type (base, variant, or region)
         let cardType = "base";
         const isMega =
-          card.subtypes?.some((subtype) => subtype === "MEGA") ?? false;
+          card.subtypes?.some((subtype) => subtype === "MEGA");
 
         if (
           subtypes.some((subtype) => {
             const subtypeValue = subtype.split(" ")[0];
-            return card.subtypes?.some(
+            return card.subtypes.some(
               (cardSubtype) =>
                 cardSubtype === subtypeValue ||
                 (subtype.includes("EX") && cardSubtype === "EX")
@@ -124,15 +131,16 @@ export async function loadCards(
         }
 
         // Initialize maps if needed
-        if (!processedPokemon.has(pokedexNumber)) {
-          processedPokemon.set(pokedexNumber, new Map());
+        let pokemonTypes = processedPokemon.get(pokedexNumber);
+        if (!pokemonTypes) {
+          pokemonTypes = new Map();
+          processedPokemon.set(pokedexNumber, pokemonTypes);
         }
-        const pokemonTypes = processedPokemon.get(pokedexNumber)!;
         if (!pokemonTypes.has(cardType)) {
           pokemonTypes.set(cardType, []);
         }
 
-        const typeCards = pokemonTypes.get(cardType)!;
+        const typeCards: PokemonTCG.ICard[] = pokemonTypes.get(cardType) ?? [];
 
         // Add card to its type array
         typeCards.push(card);
@@ -140,12 +148,12 @@ export async function loadCards(
         // Sort by price and keep only top 2 for non-MEGA cards, or top 1 for MEGA cards
         typeCards.sort((a, b) => {
           const aPrice = Math.max(
-            a.tcgplayer?.prices?.holofoil?.market ?? 0,
-            a.tcgplayer?.prices?.normal?.market ?? 0
+            a.tcgplayer?.prices.holofoil?.market ?? 0,
+            a.tcgplayer?.prices.normal?.market ?? 0
           );
           const bPrice = Math.max(
-            b.tcgplayer?.prices?.holofoil?.market ?? 0,
-            b.tcgplayer?.prices?.normal?.market ?? 0
+            b.tcgplayer?.prices.holofoil?.market ?? 0,
+            b.tcgplayer?.prices.normal?.market ?? 0
           );
           return bPrice - aPrice;
         });

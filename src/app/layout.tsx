@@ -1,24 +1,23 @@
-"use server";
 import "./globals.css";
-import { JSX } from "react";
+import type { JSX } from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Script from "next/script";
 import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
-import { baseMetadata, jsonLd } from "@lib";
 import { FloatingMenu } from "@components";
+import { baseMetadata, jsonLd } from "@lib";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export async function generateMetadata(): Promise<Metadata> {
+export function generateMetadata(): Metadata {
   return baseMetadata;
 }
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>): Promise<JSX.Element> {
+}>): JSX.Element {
   return (
     <html lang="en">
       <head>
@@ -43,7 +42,7 @@ export default async function RootLayout({
         <FloatingMenu />
         <VercelAnalytics />
         <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID}`}
+          src={`https://www.googletagmanager.com/gtag/js?id=${String(process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID)}`}
         />
       </body>
     </html>

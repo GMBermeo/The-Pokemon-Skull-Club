@@ -1,7 +1,6 @@
-"use server";
-import { JSX } from "react";
-import { Metadata } from "next";
-import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
+import {use, type JSX } from "react";
+import type { Metadata } from "next";
+import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
 import { Body, CardGrid, Header } from "@components";
 import { baseMetadata, retryWithBackoff } from "@lib";
 import { sortCardsByDateAndPokedex } from "@utils";
@@ -42,11 +41,11 @@ const metadata: Metadata = {
   },
 };
 
-export async function generateMetadata(): Promise<Metadata> {
+export function generateMetadata(): Metadata {
   return metadata;
 }
 
-async function getData(): Promise<PokemonTCG.Card[]> {
+async function getData(): Promise<PokemonTCG.ICard[]> {
   try {
     const dogPokemonNumbers = [
       58,
@@ -81,13 +80,13 @@ async function getData(): Promise<PokemonTCG.Card[]> {
       1014, // Okidogi
     ];
 
-    const allCards: PokemonTCG.Card[] = [];
+    const allCards: PokemonTCG.ICard[] = [];
 
     // Fetch cards for each Pokémon number individually
     for (const pokedexNumber of dogPokemonNumbers) {
       const response = await retryWithBackoff(() =>
         PokemonTCG.findCardsByQueries({
-          q: `nationalPokedexNumbers:${pokedexNumber} -set.id:mcd* -rarity:*rainbow* -rarity:*common* -subtypes:V-UNION`,
+          q: `nationalPokedexNumbers:${String(pokedexNumber)} -set.id:mcd* -rarity:*rainbow* -rarity:*common* -subtypes:V-UNION`,
           orderBy: "-set.releaseDate",
         })
       );
@@ -101,8 +100,8 @@ async function getData(): Promise<PokemonTCG.Card[]> {
   }
 }
 
-export default async function DogsPage(): Promise<JSX.Element> {
-  const cards = await getData();
+export default function DogsPage(): JSX.Element {
+  const cards = use(getData());
 
   return (
     <Body className="bg-amber-50 dark:bg-slate-900 text-slate-950">

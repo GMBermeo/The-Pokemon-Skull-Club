@@ -1,7 +1,7 @@
-import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
+import type { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
 import { loadCards } from "@lib";
 
-export async function fetchPokemonCollection(): Promise<PokemonTCG.Card[]> {
+export async function fetchPokemonCollection(): Promise<PokemonTCG.ICard[]> {
   const cardCollectionBase1 = await loadCards(1, 24);
   const pichu = await loadCards(172);
   const cardCollectionBase2 = await loadCards(25, 34);
@@ -133,7 +133,7 @@ export async function fetchPokemonCollection(): Promise<PokemonTCG.Card[]> {
     ...munchlax,
     ...cardCollectionBase29,
   ].filter(
-    (card: PokemonTCG.Card, index: number, self: PokemonTCG.Card[]) =>
+    (card: PokemonTCG.ICard, index: number, self: PokemonTCG.ICard[]) =>
       index === self.findIndex((t) => t.id === card.id)
   );
 }

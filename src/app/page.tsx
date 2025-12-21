@@ -1,15 +1,14 @@
-"use server";
-import { JSX } from "react";
-import { Metadata } from "next";
-import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
+import {use, type JSX } from "react";
+import type { Metadata } from "next";
+import type { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
 import { Body, CardGrid, Header } from "@components";
 import { baseMetadata, fetchPokemonCollection } from "@lib";
 
-export async function generateMetadata(): Promise<Metadata> {
+export function generateMetadata(): Metadata {
   return baseMetadata;
 }
 
-async function getData(): Promise<PokemonTCG.Card[]> {
+async function getData(): Promise<PokemonTCG.ICard[]> {
   try {
     const response = await fetchPokemonCollection();
 
@@ -20,8 +19,8 @@ async function getData(): Promise<PokemonTCG.Card[]> {
   }
 }
 
-export default async function HomePage(): Promise<JSX.Element> {
-  const cards = await getData();
+export default function HomePage(): JSX.Element {
+  const cards = use(getData());
 
   return (
     <Body>

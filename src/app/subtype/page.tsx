@@ -1,6 +1,5 @@
-"use server";
-import { JSX } from "react";
-import { Metadata } from "next";
+import {type JSX } from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Body } from "@components";
 import { baseMetadata } from "@lib";
@@ -31,7 +30,7 @@ const metadata: Metadata = {
   },
 };
 
-export async function generateMetadata(): Promise<Metadata> {
+export function generateMetadata(): Metadata {
   return metadata;
 }
 
@@ -87,7 +86,7 @@ const subtypes = [
   },
 ];
 
-export default async function SubtypePage(): Promise<JSX.Element> {
+export default function SubtypePage(): JSX.Element {
   return (
     <Body className="bg-gray-50 dark:bg-gray-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

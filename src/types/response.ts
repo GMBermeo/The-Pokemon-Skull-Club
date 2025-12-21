@@ -56,7 +56,7 @@ export enum RetreatCost {
 export interface Cardmarket {
   url: string;
   updatedAt: UpdatedAt;
-  prices: { [key: string]: number };
+  prices: Record<string, number>;
 }
 
 export enum UpdatedAt {

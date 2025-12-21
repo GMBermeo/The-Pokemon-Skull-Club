@@ -1,5 +1,5 @@
-import { Metadata } from "next";
-import { Guide, WithContext } from "schema-dts";
+import type { Metadata } from "next";
+import type { Guide, WithContext } from "schema-dts";
 
 export const baseMetadata: Metadata = {
   title: "Bone Club - A Private Pokémon TCG Collection",

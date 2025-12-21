@@ -1,16 +1,16 @@
-import { JSX } from "react";
-import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
+import type { JSX } from "react";
+import type { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
 
-type CardGridProps = {
-  cardCollection: PokemonTCG.Card[];
-};
+interface CardGridProps {
+  cardCollection: PokemonTCG.ICard[];
+}
 
 export function CardGrid({
   cardCollection,
 }: Readonly<CardGridProps>): JSX.Element {
   // Server-side calculations
   const totalCards: number = cardCollection.length;
-  // const totalPages = Math.ceil(totalCards / 4);
+  // const totalPages = Math.ceil(totalCards / 4) ;
 
   // Format price function
   const formatPrice = (price?: number | null): string | null => {
@@ -19,20 +19,20 @@ export function CardGrid({
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-      {cardCollection.map((card: PokemonTCG.Card, index: number) => {
+      {cardCollection.map((card: PokemonTCG.ICard, index: number) => {
         const indexCarta: number = totalCards - index;
         // Server-side price formatting
         const normalHigh: string | null = formatPrice(
-          card.tcgplayer?.prices?.normal?.high
+          card.tcgplayer?.prices.normal?.high
         );
         const normalMarket: string | null = formatPrice(
-          card.tcgplayer?.prices?.normal?.market
+          card.tcgplayer?.prices.normal?.market
         );
         const foilHigh: string | null = formatPrice(
-          card.tcgplayer?.prices?.holofoil?.high
+          card.tcgplayer?.prices.holofoil?.high
         );
         const foilMarket: string | null = formatPrice(
-          card.tcgplayer?.prices?.holofoil?.market
+          card.tcgplayer?.prices.holofoil?.market
         );
 
         // Build price display string
@@ -49,8 +49,8 @@ export function CardGrid({
           <div key={card.id} className="flex flex-col gap-2 max-w-full">
             <div className="text-white text-sm font-normal flex justify-between">
               <p>
-                {card?.nationalPokedexNumbers?.[0] &&
-                  `#${card.nationalPokedexNumbers[0]}`}{" "}
+                {card.nationalPokedexNumbers?.[0] &&
+                  `#${String(card.nationalPokedexNumbers[0])}`}{" "}
                 ({card.number}/{card.set.printedTotal})
               </p>
               <p>
@@ -71,7 +71,7 @@ export function CardGrid({
             >
               <img
                 src={card.images.small}
-                alt={`${card.name} (${card.id}) ${card?.flavorText}`}
+                alt={`${card.name} (${card.id}) ${card.flavorText ?? ""}`}
                 loading="lazy"
                 className="rounded-lg w-full"
               />

@@ -1,7 +1,7 @@
-"use server";
-import { JSX, Suspense } from "react";
-import { Metadata } from "next";
-import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
+import {use, type JSX} from "react";
+import { Suspense } from "react";
+import type { Metadata } from "next";
+import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
 import { Body, CardGrid, Header } from "@components";
 import { baseMetadata, retryWithBackoff } from "@lib";
 import { sortCardsByDateAndPokedex } from "@utils";
@@ -10,7 +10,7 @@ interface Params {
   nationalPokedexNumber: string;
 }
 
-async function getData(pokedexNumber: string): Promise<PokemonTCG.Card[]> {
+async function getData(pokedexNumber: string): Promise<PokemonTCG.ICard[]> {
   try {
     const response = await retryWithBackoff(() =>
       PokemonTCG.findCardsByQueries({
@@ -68,7 +68,7 @@ export async function generateMetadata({
     : "";
   const hp: string = cards[0].hp ? `HP ${cards[0].hp}` : "";
   const set: string = cards[0].set.name ? `set ${cards[0].set.name}` : "";
-  const subtypes: string = cards[0].subtypes?.join(", ") ?? "";
+  const subtypes: string = cards[0].subtypes.join(", ");
   const types: string = cards[0].types?.join(", ") ?? "";
 
   return {
@@ -123,11 +123,10 @@ export async function generateMetadata({
   };
 }
 
-export async function generateStaticParams(): Promise<
+export function generateStaticParams():
   {
     nationalPokedexNumber: string;
-  }[]
-> {
+  }[] {
   // Generate static params for all 1025 pokemons
   const pokemonNumbers: string[] = Array.from({ length: 1025 }, (_, i) =>
     (i + 1).toString()
@@ -138,15 +137,15 @@ export async function generateStaticParams(): Promise<
   }));
 }
 
-export default async function PokemonPage({
+export default function PokemonPage({
   params,
 }: Readonly<{
   params: Promise<Params>;
-}>): Promise<JSX.Element> {
-  const resolvedParams: Params = await params;
-  const cards: PokemonTCG.Card[] = await getData(
+}>): JSX.Element {
+  const resolvedParams: Params = use(params);
+  const cards: PokemonTCG.ICard[] = use(getData(
     resolvedParams.nationalPokedexNumber
-  );
+  ));
   const pokemonName: string =
     cards[0]?.name.split(" ")[0] ||
     `Pokemon #${resolvedParams.nationalPokedexNumber}`;

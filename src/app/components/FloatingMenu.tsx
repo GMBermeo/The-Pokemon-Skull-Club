@@ -1,5 +1,6 @@
 "use client";
-import { useState, JSX } from "react";
+import type { JSX } from "react";
+import { useState } from "react";
 import Link from "next/link";
 
 interface Route {
@@ -63,7 +64,7 @@ export const FloatingMenu = (): JSX.Element => {
       {/* Visual floating menu for users */}
       <div className="fixed bottom-4 right-4 z-50">
         <button
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={() => { setIsOpen(!isOpen); }}
           className="bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-800 rounded-full p-4 shadow-lg hover:opacity-90 transition-opacity"
           aria-label="Toggle navigation menu"
           aria-expanded={isOpen}
@@ -108,7 +109,7 @@ export const FloatingMenu = (): JSX.Element => {
                   <Link
                     href={route.path}
                     className="block px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700"
-                    onClick={() => setIsOpen(false)}
+                    onClick={() => { setIsOpen(false); }}
                   >
                     <span
                       className={`${route.className} text-slate-800 dark:text-slate-100`}

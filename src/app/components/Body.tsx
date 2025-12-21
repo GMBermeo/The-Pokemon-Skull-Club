@@ -1,4 +1,4 @@
-import { JSX } from "react";
+import type { JSX } from "react";
 import { Footer } from "@components";
 
 interface BodyProps {
@@ -6,7 +6,7 @@ interface BodyProps {
   className?: string;
 }
 
-export const Body = (props: BodyProps): JSX.Element => {
+export const Body = (props: Readonly<BodyProps>): JSX.Element => {
   return (
     <div
       className={`flex flex-col items-center justify-center  dark:text-white px-4 py-2 min-h-screen ${

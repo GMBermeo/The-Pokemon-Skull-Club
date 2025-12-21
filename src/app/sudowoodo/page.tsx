@@ -1,7 +1,6 @@
-"use server";
-import { JSX } from "react";
-import { Metadata } from "next";
-import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
+import {use, type JSX } from "react";
+import type { Metadata } from "next";
+import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
 import { Body, CardGrid, Header } from "@components";
 import { baseMetadata, retryWithBackoff } from "@lib";
 import { sortCardsByDateAndPokedex } from "@utils";
@@ -40,20 +39,20 @@ const metadata: Metadata = {
   },
 };
 
-export async function generateMetadata(): Promise<Metadata> {
+export function generateMetadata(): Metadata {
   return metadata;
 }
 
-async function getData(): Promise<PokemonTCG.Card[]> {
+async function getData(): Promise<PokemonTCG.ICard[]> {
   try {
-    const sudowoodoResponse: PokemonTCG.Card[] = await retryWithBackoff(() =>
+    const sudowoodoResponse: PokemonTCG.ICard[] = await retryWithBackoff(() =>
       PokemonTCG.findCardsByQueries({
         q: "nationalPokedexNumbers:185 -set.id:mcd* -subtypes:V-UNION",
         orderBy: "-set.releaseDate",
       })
     );
 
-    const bonslyResponse: PokemonTCG.Card[] = await retryWithBackoff(() =>
+    const bonslyResponse: PokemonTCG.ICard[] = await retryWithBackoff(() =>
       PokemonTCG.findCardsByQueries({
         q: "nationalPokedexNumbers:438 -set.id:mcd* -subtypes:V-UNION",
         orderBy: "-set.releaseDate",
@@ -67,8 +66,8 @@ async function getData(): Promise<PokemonTCG.Card[]> {
   }
 }
 
-export default async function SudowoodoPage(): Promise<JSX.Element> {
-  const cards = await getData();
+export default function SudowoodoPage(): JSX.Element {
+  const cards = use(getData());
 
   return (
     <Body className="bg-amber-50 dark:bg-amber-950 text-amber-950">
