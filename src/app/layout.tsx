@@ -1,50 +1,68 @@
-"use server";
 import "./globals.css";
-import { JSX } from "react";
-import type { Metadata } from "next";
+import type { JSX } from "react";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import Script from "next/script";
-import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
-import { baseMetadata, jsonLd } from "@lib";
+import { Analytics as VercelAnalytics } from "@vercel/analytics/next";
+import { baseMetadata, baseViewport, jsonLd } from "@lib";
 import { FloatingMenu } from "@components";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
 
-export async function generateMetadata(): Promise<Metadata> {
-  return baseMetadata;
-}
+export const metadata: Metadata = baseMetadata;
+export const viewport: Viewport = baseViewport;
 
-export default async function RootLayout({
+const GA_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
+const IMPACT_VERIFICATION = process.env.NEXT_PUBLIC_IMPACT_SITE_VERIFICATION;
+
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>): Promise<JSX.Element> {
+}>): JSX.Element {
   return (
-    <html lang="en">
+    <html lang="en" className={inter.variable}>
       <head>
-        <meta
-          name="impact-site-verification"
-          content={process.env.NEXT_PUBLIC_IMPACT_SITE_VERIFICATION}
+        <link
+          rel="preconnect"
+          href="https://images.pokemontcg.io"
+          crossOrigin="anonymous"
         />
+        <link rel="dns-prefetch" href="https://images.pokemontcg.io" />
+        {IMPACT_VERIFICATION && (
+          <meta
+            name="impact-site-verification"
+            content={IMPACT_VERIFICATION}
+          />
+        )}
         <script
           type="application/ld+json"
+           
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <Script
-          id="epn-config"
-          dangerouslySetInnerHTML={{
-            __html: `window._epn = {campaign: 5339099221};`,
-          }}
-        />
-        <Script src="https://epnt.ebay.com/static/epn-smart-tools.js" />
       </head>
       <body className={inter.className}>
         {children}
         <FloatingMenu />
         <VercelAnalytics />
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID}`}
-        />
+        {GA_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="gtag-init" strategy="afterInteractive">
+              {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${GA_ID}', { anonymize_ip: true });`}
+            </Script>
+          </>
+        )}
       </body>
     </html>
   );

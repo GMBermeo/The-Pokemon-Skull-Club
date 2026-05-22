@@ -1,10 +1,14 @@
-import { JSX } from "react";
-import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
+import type { JSX } from "react";
+import Image from "next/image";
+import type { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
 import { BotaoEbay } from "./BotaoEbay";
 
 type CardDetailsProps = {
-  card: PokemonTCG.Card;
+  card: PokemonTCG.ICard;
 };
+
+const LARGE_WIDTH = 734;
+const LARGE_HEIGHT = 1024;
 
 export function CardDetails({ card }: Readonly<CardDetailsProps>): JSX.Element {
   // Format price function (reused from CardGrid)
@@ -33,11 +37,20 @@ export function CardDetails({ card }: Readonly<CardDetailsProps>): JSX.Element {
           target="_blank"
           rel="noopener noreferrer"
           className="transition-opacity"
+          aria-label={`Open full-size image of ${card.name}`}
         >
-          <img
+          <Image
             src={card.images.large}
-            alt={`${card.name} (${card.id})`}
-            className="rounded-lg w-full"
+            alt={`${card.name} - ${card.set.name} (${card.id})${
+              card.artist ? ` illustrated by ${card.artist}` : ""
+            }`}
+            width={LARGE_WIDTH}
+            height={LARGE_HEIGHT}
+            sizes="(min-width: 768px) 50vw, 100vw"
+            priority
+            fetchPriority="high"
+            unoptimized
+            className="rounded-lg w-full h-auto"
           />
         </a>
 

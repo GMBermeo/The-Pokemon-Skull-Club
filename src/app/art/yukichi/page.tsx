@@ -1,13 +1,13 @@
-"use server";
 import { JSX } from "react";
 import { Metadata } from "next";
-import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
+import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
 import { Body, CardGrid, Header } from "@components";
 import { baseMetadata, retryWithBackoff } from "@lib";
 import { sortCardsByDateAndPokedex } from "@utils";
 
 const metadata: Metadata = {
   ...baseMetadata,
+  alternates: { canonical: "/art/yukichi" },
   title: "Shimaris Yukichi's Art",
   description:
     "Browse Shimaris Yukichi's adorable Pokémon card artwork collection. Experience their unique style that emphasizes the cute and round aspects of Pokémon, set against simple yet effective backgrounds that highlight their charming expressions. Features their complete gallery of illustrations with detailed card information and high-quality images.",
@@ -35,7 +35,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return metadata;
 }
 
-async function getData(): Promise<PokemonTCG.Card[]> {
+async function getData(): Promise<PokemonTCG.ICard[]> {
   try {
     const response = await retryWithBackoff(() =>
       PokemonTCG.findCardsByQueries({

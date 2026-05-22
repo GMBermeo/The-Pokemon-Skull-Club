@@ -1,9 +1,9 @@
-import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
+import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
 
 export function sortCardsByDateAndPokedex(
-  cards: PokemonTCG.Card[]
-): PokemonTCG.Card[] {
-  return cards.sort((a: PokemonTCG.Card, b: PokemonTCG.Card) => {
+  cards: PokemonTCG.ICard[]
+): PokemonTCG.ICard[] {
+  return cards.sort((a: PokemonTCG.ICard, b: PokemonTCG.ICard) => {
     // First compare by release date (newest first)
     const dateComparison =
       new Date(b.set.releaseDate).getTime() -
@@ -22,9 +22,9 @@ export function sortCardsByDateAndPokedex(
 }
 
 export function sortCardsByDexNumber(
-  cards: PokemonTCG.Card[]
-): PokemonTCG.Card[] {
-  return cards.sort((a: PokemonTCG.Card, b: PokemonTCG.Card) => {
+  cards: PokemonTCG.ICard[]
+): PokemonTCG.ICard[] {
+  return cards.sort((a: PokemonTCG.ICard, b: PokemonTCG.ICard) => {
     return (
       (a.nationalPokedexNumbers?.[0] ?? 0) -
       (b.nationalPokedexNumbers?.[0] ?? 0)

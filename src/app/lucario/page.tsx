@@ -1,13 +1,13 @@
-"use server";
 import { JSX } from "react";
 import { Metadata } from "next";
-import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
+import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
 import { Body, CardGrid, Header } from "@components";
 import { baseMetadata, retryWithBackoff } from "@lib";
 import { sortCardsByDateAndPokedex } from "@utils";
 
 const metadata: Metadata = {
   ...baseMetadata,
+  alternates: { canonical: "/lucario" },
   title: "Riolus & Lucarios",
   description:
     "'By catching the aura emanating from others, it can read their thoughts and movements.' ⚡ This tool was developed using the SSG with Next.js 15 in order to index all the Riolu and Lucario cards from Pokémon TCG for a private collection. ⚡ The source code can be found on github and easily changed to any other parameter.",
@@ -43,9 +43,9 @@ export async function generateMetadata(): Promise<Metadata> {
   return metadata;
 }
 
-async function getData(): Promise<PokemonTCG.Card[]> {
+async function getData(): Promise<PokemonTCG.ICard[]> {
   try {
-    const response: PokemonTCG.Card[] = await retryWithBackoff(() =>
+    const response: PokemonTCG.ICard[] = await retryWithBackoff(() =>
       PokemonTCG.findCardsByQueries({
         q: "nationalPokedexNumbers:[447 TO 448] -set.id:mcd* -subtypes:V-UNION",
         orderBy: "-set.releaseDate",

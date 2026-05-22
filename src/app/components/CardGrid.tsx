@@ -1,41 +1,37 @@
-import { JSX } from "react";
-import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
+import type { JSX } from "react";
+import Image from "next/image";
+import type { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
 
 type CardGridProps = {
-  cardCollection: PokemonTCG.Card[];
+  cardCollection: PokemonTCG.ICard[];
 };
+
+const TCG_SMALL_WIDTH = 245;
+const TCG_SMALL_HEIGHT = 342;
+const SIZES =
+  "(min-width: 1280px) 16vw, (min-width: 1024px) 20vw, (min-width: 768px) 25vw, (min-width: 640px) 33vw, 50vw";
+
+function formatPrice(price?: number | null): string | null {
+  return price ? `$${price.toFixed(2)}` : null;
+}
 
 export function CardGrid({
   cardCollection,
 }: Readonly<CardGridProps>): JSX.Element {
-  // Server-side calculations
-  const totalCards: number = cardCollection.length;
-  // const totalPages = Math.ceil(totalCards / 4);
-
-  // Format price function
-  const formatPrice = (price?: number | null): string | null => {
-    return price ? `$${price.toFixed(2)}` : null;
-  };
+  const totalCards = cardCollection.length;
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-      {cardCollection.map((card: PokemonTCG.Card, index: number) => {
-        const indexCarta: number = totalCards - index;
-        // Server-side price formatting
-        const normalHigh: string | null = formatPrice(
-          card.tcgplayer?.prices?.normal?.high
-        );
-        const normalMarket: string | null = formatPrice(
-          card.tcgplayer?.prices?.normal?.market
-        );
-        const foilHigh: string | null = formatPrice(
-          card.tcgplayer?.prices?.holofoil?.high
-        );
-        const foilMarket: string | null = formatPrice(
+    <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 list-none p-0 m-0">
+      {cardCollection.map((card, index) => {
+        const indexCarta = totalCards - index;
+        const isLcpCandidate = index < 6;
+        const normalHigh = formatPrice(card.tcgplayer?.prices?.normal?.high);
+        const normalMarket = formatPrice(card.tcgplayer?.prices?.normal?.market);
+        const foilHigh = formatPrice(card.tcgplayer?.prices?.holofoil?.high);
+        const foilMarket = formatPrice(
           card.tcgplayer?.prices?.holofoil?.market
         );
 
-        // Build price display string
         const priceDisplay = [
           normalHigh && `h: ${normalHigh}`,
           normalMarket && `m: ${normalMarket}`,
@@ -45,8 +41,14 @@ export function CardGrid({
           .filter(Boolean)
           .join(" | ");
 
+        const altText = `${card.name} card${
+          card.set?.name ? ` from ${card.set.name}` : ""
+        }${card.artist ? ` illustrated by ${card.artist}` : ""}${
+          card.flavorText ? `. ${card.flavorText}` : ""
+        }`;
+
         return (
-          <div key={card.id} className="flex flex-col gap-2 max-w-full">
+          <li key={card.id} className="flex flex-col gap-2 max-w-full">
             <div className="text-white text-sm font-normal flex justify-between">
               <p>
                 {card?.nationalPokedexNumbers?.[0] &&
@@ -64,21 +66,26 @@ export function CardGrid({
 
             <a
               href={`/card/${card.id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              // Removed hover effect since it's now server-side
+              rel="noopener"
+              aria-label={`View details for ${card.name}`}
               className="transition-opacity mt-auto"
             >
-              <img
+              <Image
                 src={card.images.small}
-                alt={`${card.name} (${card.id}) ${card?.flavorText}`}
-                loading="lazy"
-                className="rounded-lg w-full"
+                alt={altText}
+                width={TCG_SMALL_WIDTH}
+                height={TCG_SMALL_HEIGHT}
+                sizes={SIZES}
+                loading={isLcpCandidate ? "eager" : "lazy"}
+                fetchPriority={isLcpCandidate ? "high" : "low"}
+                priority={isLcpCandidate}
+                unoptimized
+                className="rounded-lg w-full h-auto"
               />
             </a>
-          </div>
+          </li>
         );
       })}
-    </div>
+    </ul>
   );
 }

@@ -1,11 +1,32 @@
-import { Metadata } from "next";
-import { Guide, WithContext } from "schema-dts";
+import type { Metadata, Viewport } from "next";
+import type { Guide, WithContext } from "schema-dts";
+
+export const SITE_URL = "https://pokemon.bermeo.dev";
+
+const SITE_TITLE = "Bone Club - A Private Pokémon TCG Collection";
+const SITE_DESCRIPTION =
+  "A comprehensive guide to the Pokémon Trading Card Game collection. Browse through rare cards, special editions, and unique artworks. Features detailed card information, high-quality images, and expert insights. Perfect for collectors and enthusiasts alike.";
+
+export const baseViewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f8fafc" },
+    { media: "(prefers-color-scheme: dark)", color: "#1e293b" },
+  ],
+  colorScheme: "dark light",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
 
 export const baseMetadata: Metadata = {
-  title: "Bone Club - A Private Pokémon TCG Collection",
-  description:
-    "A comprehensive guide to the Pokémon Trading Card Game collection. Browse through rare cards, special editions, and unique artworks. Features detailed card information, high-quality images, and expert insights. Perfect for collectors and enthusiasts alike.",
+  title: {
+    default: SITE_TITLE,
+    template: "%s | Bone Club",
+  },
+  description: SITE_DESCRIPTION,
+  applicationName: "Bone Club",
   authors: [{ name: "Guilherme Bermêo", url: "https://bermeo.dev" }],
+  generator: "Next.js",
   keywords: [
     "Pokemon",
     "TCG",
@@ -24,34 +45,35 @@ export const baseMetadata: Metadata = {
     "Sudowoodo",
     "Totodile",
     "Original 151",
-    "HTML",
-    "CSS",
-    "JavaScript",
-    "React",
-    "Next.js 15",
+    "Next.js",
     "Typescript",
-    "Front-end",
-    "Brasília",
-    "Roraima",
-    "Guilherme Bermêo",
-    "PokeAPI",
-    "Bermêo",
-    "Bermeo",
     "Tailwind CSS",
     "Static Site Generation",
+    "Guilherme Bermêo",
+    "Bermeo",
   ],
-  /* manifest: "/site.webmanifest", */
-  robots: "index, follow",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   publisher: "Guilherme Bermeo",
   creator: "Guilherme Bermêo",
-  metadataBase: new URL("https://pokemon.bermeo.dev"),
+  metadataBase: new URL(SITE_URL),
+  alternates: {
+    canonical: "/",
+  },
+  manifest: "/manifest.webmanifest",
   icons: {
     icon: [
-      {
-        url: "/favicon.ico",
-        sizes: "any",
-      },
-      { url: "/logo.svg" },
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/logo.svg", type: "image/svg+xml" },
       {
         url: "/icons/android-chrome-192x192.png",
         sizes: "192x192",
@@ -68,37 +90,112 @@ export const baseMetadata: Metadata = {
     apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
   },
   openGraph: {
-    title: "Pokemon TCG",
-    description:
-      "A comprehensive guide to the Pokémon Trading Card Game collection. Browse through rare cards, special editions, and unique artworks. Features detailed card information, high-quality images, and expert insights. Perfect for collectors and enthusiasts alike.",
+    type: "website",
+    siteName: "Bone Club",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    locale: "en_US",
     images: [
       {
-        url: "https://pokemon.bermeo.dev/opengraph/ghost_marowak.jpg",
+        url: "/opengraph/ghost_marowak.jpg",
         width: 1280,
         height: 720,
+        alt: "Ghost Marowak — Bone Club banner",
         type: "image/jpeg",
       },
       {
-        url: "https://pokemon.bermeo.dev/opengraph/marowak.png",
+        url: "/opengraph/marowak.png",
         width: 250,
         height: 250,
+        alt: "Marowak icon",
         type: "image/png",
       },
     ],
   },
-  /* themeColor: "#233140", */
-  other: {},
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [`${SITE_URL}/opengraph/ghost_marowak.jpg`],
+    creator: "@gmbermeo",
+  },
+  category: "games",
 };
+
+type BuildMetadataInput = {
+  path: string;
+  title?: string;
+  description?: string;
+  keywords?: string[];
+  ogImage?: string;
+  noindex?: boolean;
+};
+
+export function buildMetadata({
+  path,
+  title,
+  description,
+  keywords,
+  ogImage,
+  noindex,
+}: BuildMetadataInput): Metadata {
+  const canonicalPath = path.startsWith("/") ? path : `/${path}`;
+  const fullUrl = `${SITE_URL}${canonicalPath === "/" ? "" : canonicalPath}`;
+  const finalDescription = description ?? SITE_DESCRIPTION;
+  const finalTitle = title ?? SITE_TITLE;
+
+  return {
+    ...baseMetadata,
+    title,
+    description: finalDescription,
+    keywords: keywords ?? baseMetadata.keywords,
+    alternates: { canonical: canonicalPath },
+    robots: noindex
+      ? { index: false, follow: false }
+      : baseMetadata.robots,
+    openGraph: {
+      ...baseMetadata.openGraph,
+      title: finalTitle,
+      description: finalDescription,
+      url: fullUrl,
+      ...(ogImage
+        ? {
+            images: [
+              {
+                url: ogImage.startsWith("http") ? ogImage : `${SITE_URL}${ogImage}`,
+                width: 1200,
+                height: 630,
+                alt: finalTitle,
+              },
+            ],
+          }
+        : {}),
+    },
+    twitter: {
+      ...baseMetadata.twitter,
+      title: finalTitle,
+      description: finalDescription,
+      ...(ogImage
+        ? {
+            images: [
+              ogImage.startsWith("http") ? ogImage : `${SITE_URL}${ogImage}`,
+            ],
+          }
+        : {}),
+    },
+  };
+}
 
 export const jsonLd: WithContext<Guide> = {
   "@context": "https://schema.org",
   "@type": "Guide",
   about: "Pokémon TCG",
-  name: "Bone Club - A Private Pokémon TCG Collection",
-  url: "https://pokemon.bermeo.dev",
-  text: "A comprehensive guide to the Pokémon Trading Card Game collection. Browse through rare cards, special editions, and unique artworks. Features detailed card information, high-quality images, and expert insights. Perfect for collectors and enthusiasts alike.",
+  name: SITE_TITLE,
+  url: SITE_URL,
+  text: SITE_DESCRIPTION,
   reviewAspect: ["Card", "Type", "Collection"],
-  image: "https://pokemon.bermeo.dev/logo.svg",
+  image: `${SITE_URL}/logo.svg`,
   creator: {
     "@type": "Person",
     name: "Guilherme Bermeo",

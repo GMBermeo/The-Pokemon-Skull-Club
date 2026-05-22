@@ -1,13 +1,13 @@
-"use server";
 import { JSX } from "react";
 import { Metadata } from "next";
-import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
+import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
 import { Body, CardGrid, Header } from "@components";
 import { baseMetadata, retryWithBackoff } from "@lib";
 import { sortCardsByDateAndPokedex } from "@utils";
 
 const metadata: Metadata = {
   ...baseMetadata,
+  alternates: { canonical: "/rare-dogs" },
   title: "Pokémon Dogs Collection",
   description:
     "A comprehensive collection of all dog-like Pokémon cards from the Pokémon Trading Card Game. From Growlithe to Mabosstiff, discover all the canine companions throughout the generations.",
@@ -46,7 +46,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return metadata;
 }
 
-async function getData(): Promise<PokemonTCG.Card[]> {
+async function getData(): Promise<PokemonTCG.ICard[]> {
   try {
     const dogPokemonNumbers = [
       58,
@@ -81,7 +81,7 @@ async function getData(): Promise<PokemonTCG.Card[]> {
       1014, // Okidogi
     ];
 
-    const allCards: PokemonTCG.Card[] = [];
+    const allCards: PokemonTCG.ICard[] = [];
 
     // Fetch cards for each Pokémon number individually
     for (const pokedexNumber of dogPokemonNumbers) {

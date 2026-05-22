@@ -1,4 +1,4 @@
-import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
+import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
 
 interface ApiError extends Error {
   response?: {
@@ -32,7 +32,7 @@ export const generalFilter: string =
 export async function loadCards(
   startPokemon: number,
   finalPokemon?: number
-): Promise<PokemonTCG.Card[]> {
+): Promise<PokemonTCG.ICard[]> {
   const subtypes = ["EX hp:[200 TO *]", "V", "GX", "MEGA", "VMAX", "TAG"];
   const regions = ["alola*", "galar*", "hisui*", "paldea*"];
   const totalPokemons: number = finalPokemon ?? startPokemon;
@@ -40,7 +40,7 @@ export async function loadCards(
   // Build a single query that includes all variants for the pokemon range
   const pokemonRange = Array.from(
     { length: totalPokemons - startPokemon + 1 },
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+     
     (_: unknown, i: number) => startPokemon + i
   ).join(" OR nationalPokedexNumbers:");
 
@@ -71,8 +71,8 @@ export async function loadCards(
     },
   ];
 
-  const cardCollection: PokemonTCG.Card[] = [];
-  const processedPokemon = new Map<number, Map<string, PokemonTCG.Card[]>>();
+  const cardCollection: PokemonTCG.ICard[] = [];
+  const processedPokemon = new Map<number, Map<string, PokemonTCG.ICard[]>>();
 
   for (const params of queries) {
     try {
@@ -178,7 +178,7 @@ export async function loadCards(
   }
 
   // Flatten the processed cards into the final collection
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   Array.from(processedPokemon.entries()).forEach(([_, typeMap]) => {
     Array.from(typeMap.values()).forEach((cards) => {
       cardCollection.push(...cards);

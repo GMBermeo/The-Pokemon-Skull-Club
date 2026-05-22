@@ -1,13 +1,13 @@
-"use server";
 import { JSX } from "react";
 import { Metadata } from "next";
-import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
+import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
 import { Body, CardGrid, Header } from "@components";
 import { baseMetadata, retryWithBackoff } from "@lib";
 import { sortCardsByDateAndPokedex } from "@utils";
 
 const metadata: Metadata = {
   ...baseMetadata,
+  alternates: { canonical: "/art/saboteri" },
   title: "Saboteri's Art",
   description:
     "Browse Saboteri's enchanting Pokémon card artwork collection. Experience their unique style that brings Pokémon to life in atmospheric and beautifully detailed scenes, as showcased in their debut with Rellor and their stunning interpretations of Ghost-type Pokémon. Features their complete gallery of illustrations with detailed card information and high-quality images.",
@@ -35,7 +35,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return metadata;
 }
 
-async function getData(): Promise<PokemonTCG.Card[]> {
+async function getData(): Promise<PokemonTCG.ICard[]> {
   try {
     const response = await retryWithBackoff(() =>
       PokemonTCG.findCardsByQueries({

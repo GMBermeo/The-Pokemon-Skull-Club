@@ -1,12 +1,12 @@
-"use server";
 import { JSX } from "react";
 import { Metadata } from "next";
-import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
+import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
 import { Body, CardGrid, Header } from "@components";
 import { baseMetadata, retryWithBackoff } from "@lib";
 
 const metadata: Metadata = {
   ...baseMetadata,
+  alternates: { canonical: "/art/akira" },
   title: "Akira Egawa's Art",
   description:
     "Explore Akira Egawa's stunning Pokémon card illustrations. Discover their unique art style, memorable card designs, and complete artwork portfolio for the Pokémon Trading Card Game. Features high-quality images and detailed information about each card.",
@@ -34,7 +34,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return metadata;
 }
 
-async function getData(): Promise<PokemonTCG.Card[]> {
+async function getData(): Promise<PokemonTCG.ICard[]> {
   try {
     const response = await retryWithBackoff(() =>
       PokemonTCG.findCardsByQueries({

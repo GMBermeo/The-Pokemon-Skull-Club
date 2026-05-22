@@ -1,8 +1,7 @@
-"use server";
 import { JSX, Suspense } from "react";
 import { Metadata } from "next";
 import Link from "next/link";
-import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
+import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
 import { Body, CardDetails } from "@components";
 import { baseMetadata, fetchPokemonCollection, retryWithBackoff } from "@lib";
 
@@ -10,7 +9,7 @@ interface Params {
   cardId: string;
 }
 
-async function getData(cardId: string): Promise<PokemonTCG.Card | undefined> {
+async function getData(cardId: string): Promise<PokemonTCG.ICard | undefined> {
   try {
     const response = await retryWithBackoff(() =>
       PokemonTCG.findCardByID(cardId)
@@ -28,7 +27,7 @@ export async function generateMetadata({
   params: Promise<Params>;
 }>): Promise<Metadata> {
   const resolvedParams: Params = await params;
-  const fetchedCard: PokemonTCG.Card | undefined = await getData(
+  const fetchedCard: PokemonTCG.ICard | undefined = await getData(
     resolvedParams.cardId
   );
 
@@ -51,11 +50,15 @@ export async function generateMetadata({
 
   const metadataObj: Metadata = {
     ...baseMetadata,
-    title: fetchedCard.name,
-    description: fetchedCard.supertype,
+    alternates: { canonical: `/card/${fetchedCard.id}` },
+    title: `${fetchedCard.name} (${fetchedCard.set.name})`,
+    description:
+      fetchedCard.flavorText ??
+      `${fetchedCard.name} - ${fetchedCard.supertype} from ${fetchedCard.set.name} (${fetchedCard.set.series}), ${fetchedCard.set.releaseDate}. Illustrated by ${fetchedCard.artist}.`,
     openGraph: {
-      title: fetchedCard.name,
-      description: `${fetchedCard?.flavorText}. ${fetchedCard.id} - ${fetchedCard.set.name}: ${fetchedCard.set.series}. ${fetchedCard.set.releaseDate}. Art: ${fetchedCard.artist}`,
+      type: "article",
+      title: `${fetchedCard.name} (${fetchedCard.set.name})`,
+      description: `${fetchedCard?.flavorText ?? ""} ${fetchedCard.id} - ${fetchedCard.set.name}: ${fetchedCard.set.series}. ${fetchedCard.set.releaseDate}. Art: ${fetchedCard.artist}`.trim(),
       url: `https://pokemon.bermeo.dev/card/${fetchedCard.id}`,
       section: fetchedCard.name,
       images: [
@@ -63,6 +66,7 @@ export async function generateMetadata({
           url: fetchedCard.images.large,
           width: 734,
           height: 1024,
+          alt: `${fetchedCard.name} card illustrated by ${fetchedCard.artist}`,
           type: "image/png",
         },
       ],
@@ -71,20 +75,16 @@ export async function generateMetadata({
     keywords: [
       fetchedCard.name,
       fetchedCard.supertype,
-      fetchedCard.rarity,
+      fetchedCard.rarity ?? "",
       fetchedCard.set.name,
       fetchedCard.set.series,
       fetchedCard.set.id,
       fetchedCard.id,
-      fetchedCard.rarity,
-      fetchedCard.set.name,
-      fetchedCard.set.series,
-      fetchedCard.set.id,
       "pokemon",
       "tcg",
       "pokemon tcg",
       ...transformedArrayStrings,
-    ],
+    ].filter(Boolean),
   };
 
   return metadataObj;
@@ -159,13 +159,13 @@ export async function generateStaticParams(): Promise<
     // Filter for successful promises and flatten their values
     const filteredStaticCards = staticCards
       .filter(
-        (result): result is PromiseFulfilledResult<PokemonTCG.Card[]> =>
+        (result): result is PromiseFulfilledResult<PokemonTCG.ICard[]> =>
           result.status === "fulfilled"
       )
       .map((result) => result.value)
       .flat()
       .filter(
-        (card: PokemonTCG.Card, index: number, self: PokemonTCG.Card[]) =>
+        (card: PokemonTCG.ICard, index: number, self: PokemonTCG.ICard[]) =>
           index === self.findIndex((t) => t.id === card.id)
       );
 
@@ -184,12 +184,45 @@ export default async function CardPage({
   params: Promise<{ cardId: string }>;
 }>): Promise<JSX.Element> {
   const resolvedParams = await params;
-  const card: PokemonTCG.Card | undefined = await getData(
+  const card: PokemonTCG.ICard | undefined = await getData(
     resolvedParams.cardId
   );
 
+  const cardJsonLd = card
+    ? {
+        "@context": "https://schema.org",
+        "@type": "CreativeWork",
+        name: card.name,
+        identifier: card.id,
+        url: `https://pokemon.bermeo.dev/card/${card.id}`,
+        image: card.images.large,
+        description: card.flavorText ?? `${card.name} - ${card.set.name}`,
+        author: card.artist
+          ? { "@type": "Person", name: card.artist }
+          : undefined,
+        isPartOf: { "@type": "CreativeWorkSeries", name: card.set.name },
+        datePublished: card.set.releaseDate,
+        about: { "@type": "Thing", name: card.supertype },
+        offers: card.tcgplayer?.prices?.normal?.market
+          ? {
+              "@type": "Offer",
+              priceCurrency: "USD",
+              price: card.tcgplayer.prices.normal.market,
+              availability: "https://schema.org/InStock",
+            }
+          : undefined,
+      }
+    : null;
+
   return (
     <Body>
+      {cardJsonLd && (
+        <script
+          type="application/ld+json"
+           
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(cardJsonLd) }}
+        />
+      )}
       <div className="max-w-screen-lg">
         <Suspense>
           {!card ? (
@@ -203,7 +236,7 @@ export default async function CardPage({
                 <h2 className="text-lg">{card.id}</h2>
               </div>
               <h3 className="text-md mb-4">
-                {card.flavorText ?? card.abilities?.[0].name}
+                {card.flavorText ?? card.abilities?.[0]?.name}
               </h3>
               <CardDetails card={card} />
             </>

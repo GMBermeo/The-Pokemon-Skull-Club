@@ -1,4 +1,3 @@
-"use server";
 import { JSX } from "react";
 import { Metadata } from "next";
 import Link from "next/link";
@@ -7,6 +6,7 @@ import { baseMetadata } from "@lib";
 
 const metadata: Metadata = {
   ...baseMetadata,
+  alternates: { canonical: "/art" },
   title: "Pokémon Card Artists",
   description:
     "Explore the diverse styles of Pokémon card artists, from legendary illustrators to modern masters. Browse through our comprehensive collection of artwork featuring traditional, digital, and unique artistic approaches that bring Pokémon to life.",

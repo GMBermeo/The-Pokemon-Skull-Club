@@ -1,12 +1,12 @@
-"use server";
 import { JSX } from "react";
 import { Metadata } from "next";
-import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
+import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
 import { Body, CardGrid, Header } from "@components";
 import { baseMetadata, retryWithBackoff } from "@lib";
 
 const metadata: Metadata = {
   ...baseMetadata,
+  alternates: { canonical: "/charizard" },
   title: "Charizards",
   description:
     "Explore our comprehensive Charizard Pokémon card collection guide. From vintage Base Set to modern releases, discover rare variants, secret rares, and iconic artworks of this legendary Fire-type Pokémon. Complete with market insights and collection tips.",
@@ -47,7 +47,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return metadata;
 }
 
-async function getData(): Promise<PokemonTCG.Card[]> {
+async function getData(): Promise<PokemonTCG.ICard[]> {
   try {
     const response = await retryWithBackoff(() =>
       PokemonTCG.findCardsByQueries({

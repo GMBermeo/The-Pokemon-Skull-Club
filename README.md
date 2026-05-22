@@ -1,34 +1,43 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Pokemon Skull Club
 
-## Getting Started
+A statically-generated Pokémon TCG collection site (Bone Club). Live at [pokemon.bermeo.dev](https://pokemon.bermeo.dev).
 
-First, run the development server:
+## Stack
+
+- **Next.js 16** (App Router, RSC, Turbopack dev)
+- **React 19.2**
+- **TypeScript 5.9** (ES2022 target, `bundler` moduleResolution)
+- **Tailwind CSS 3.4** (LTS)
+- **ESLint 9** (flat config)
+- **@pokelib/pokemon-tcg-sdk-typescript** (community fork of the abandoned upstream)
+- **Vercel Analytics**
+
+## Scripts
 
 ```bash
-npm run dev
-# or
-yarn dev
+yarn dev          # start Turbopack dev server
+yarn build        # production build (SSG)
+yarn start        # serve the production build locally
+yarn lint         # ESLint
+yarn type-check   # tsc --noEmit
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## SEO
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+- Dynamic `sitemap.ts` and `robots.ts` (Next.js Metadata API)
+- Per-page canonical URLs via `alternates.canonical`
+- OpenGraph + Twitter card on every page
+- JSON-LD `Guide` at site level, `CreativeWork` per card
+- `manifest.ts` (PWA)
+- `viewport` export with `themeColor`/`colorScheme`
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+## Vercel cost controls
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+- External Pokémon TCG images served via `images.pokemontcg.io` with `unoptimized: true` (bypasses paid Image Optimization)
+- 1-year immutable cache headers on `/icons`, `/social`, `/opengraph`
+- All 1025 Pokédex pages statically generated at build (zero runtime invocations)
+- Build-time `Promise.all` parallelization on `fetch-collection.ts`
 
-## Learn More
+## Migration
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+See [`MIGRATION_PLAN.md`](./MIGRATION_PLAN.md) for the full audit and migration history.

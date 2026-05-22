@@ -1,4 +1,3 @@
-"use server";
 import { JSX } from "react";
 import { Metadata } from "next";
 import Link from "next/link";
@@ -7,6 +6,7 @@ import { baseMetadata } from "@lib";
 
 const metadata: Metadata = {
   ...baseMetadata,
+  alternates: { canonical: "/subtype" },
   title: "Pokémon Card Subtypes",
   description:
     "Explore different Pokémon card subtypes including TAG TEAM, Mega Evolution, BREAK, and EX cards. Browse through our comprehensive collection of special Pokémon card variants.",
