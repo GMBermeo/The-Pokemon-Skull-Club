@@ -1,72 +1,67 @@
 import type { MetadataRoute } from "next";
+import {
+  artists,
+  cardBearingPokedexNumbers,
+  getSiteCardIndex,
+  pokemonCollections,
+  subtypeCollections,
+} from "@lib";
 
 const SITE_URL = "https://pokemon.bermeo.dev";
 
-const staticRoutes = [
-  "",
-  "/art",
-  "/bones",
-  "/charizard",
-  "/dogs",
-  "/lucario",
-  "/mewtwo",
-  "/mudkip",
-  "/pikachu",
-  "/psyduck",
-  "/rare-dogs",
-  "/subtype",
-  "/sudowoodo",
-  "/toto",
-  "/art/akira",
-  "/art/arita",
-  "/art/asaka",
-  "/art/ikegami",
-  "/art/jerky",
-  "/art/kantaro",
-  "/art/kayama",
-  "/art/mekayu",
-  "/art/minaminami",
-  "/art/mingo",
-  "/art/morii",
-  "/art/oku",
-  "/art/osare",
-  "/art/rend",
-  "/art/rika",
-  "/art/rond",
-  "/art/saboteri",
-  "/art/toriyufu",
-  "/art/uninori",
-  "/art/usgmen",
-  "/art/yukichi",
-  "/art/yukihiro",
-  "/art/yuriko",
-  "/subtype/baby",
-  "/subtype/break",
-  "/subtype/ex",
-  "/subtype/mega",
-  "/subtype/tag-team",
-  "/subtype/v-max",
-];
+// Keep the sitemap fresh as new cards appear, without rebuilding.
+export const revalidate = 604800;
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
+  const index = await getSiteCardIndex();
 
-  const staticEntries: MetadataRoute.Sitemap = staticRoutes.map((route) => ({
-    url: `${SITE_URL}${route}`,
+  const entry = (
+    path: string,
+    priority: number,
+    changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"]
+  ): MetadataRoute.Sitemap[number] => ({
+    url: `${SITE_URL}${path}`,
     lastModified: now,
-    changeFrequency: route === "" ? "weekly" : "monthly",
-    priority: route === "" ? 1 : 0.7,
-  }));
+    changeFrequency,
+    priority,
+  });
 
-  const pokedexEntries: MetadataRoute.Sitemap = Array.from(
-    { length: 1025 },
-    (_, i) => ({
-      url: `${SITE_URL}/pokedex/${i + 1}`,
-      lastModified: now,
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
-    })
+  // Navigation hubs.
+  const hubs = [
+    entry("", 1, "weekly"),
+    entry("/art", 0.8, "monthly"),
+    entry("/subtype", 0.8, "monthly"),
+  ];
+
+  // Themed collection pages (config-driven, fully prerendered).
+  const collections = pokemonCollections.map((collection) =>
+    entry(`/${collection.slug}`, 0.7, "monthly")
+  );
+  const subtypes = subtypeCollections.map((collection) =>
+    entry(`/subtype/${collection.slug}`, 0.7, "monthly")
+  );
+  const artistPages = artists.map((artist) =>
+    entry(`/art/${artist.slug}`, 0.7, "monthly")
   );
 
-  return [...staticEntries, ...pokedexEntries];
+  // Pokédex pages — only numbers that actually have cards (no thin pages).
+  // /rares is intentionally omitted: it canonicalizes to /pokedex/[n].
+  const pokedex = cardBearingPokedexNumbers(index).map((number) =>
+    entry(`/pokedex/${number}`, 0.6, "monthly")
+  );
+
+  // Card detail pages — the richest, most unique content on the site.
+  const cards = index.map((card) =>
+    entry(`/card/${card.id}`, 0.5, "monthly")
+  );
+
+  return [
+    ...hubs,
+    ...collections,
+    ...subtypes,
+    ...artistPages,
+    ...pokedex,
+    ...cards,
+  ];
 }

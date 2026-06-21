@@ -2,11 +2,10 @@ import { JSX } from "react";
 import { Metadata } from "next";
 import Link from "next/link";
 import { Body } from "@components";
-import { baseMetadata } from "@lib";
+import { buildMetadata } from "@lib";
 
-const metadata: Metadata = {
-  ...baseMetadata,
-  alternates: { canonical: "/subtype" },
+export const metadata: Metadata = buildMetadata({
+  path: "/subtype",
   title: "Pokémon Card Subtypes",
   description:
     "Explore different Pokémon card subtypes including TAG TEAM, Mega Evolution, BREAK, and EX cards. Browse through our comprehensive collection of special Pokémon card variants.",
@@ -21,19 +20,7 @@ const metadata: Metadata = {
     "special cards",
     "card subtypes",
   ],
-  openGraph: {
-    title: "Pokémon Card Subtypes",
-    description:
-      "Explore different Pokémon card subtypes including TAG TEAM, Mega Evolution, BREAK, and EX cards. Browse through our comprehensive collection of special Pokémon card variants.",
-    url: "https://pokemon.bermeo.dev/subtype",
-    section: "Card Subtypes",
-    locale: "en_US",
-  },
-};
-
-export async function generateMetadata(): Promise<Metadata> {
-  return metadata;
-}
+});
 
 const subtypes = [
   {

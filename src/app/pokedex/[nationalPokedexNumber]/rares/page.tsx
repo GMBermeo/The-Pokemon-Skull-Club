@@ -1,31 +1,29 @@
-import { JSX, Suspense } from "react";
+import { JSX } from "react";
 import { Metadata } from "next";
-import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
+import { notFound } from "next/navigation";
+import type { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
 import { Body, CardGrid, Header } from "@components";
-import { baseMetadata, retryWithBackoff } from "@lib";
+import {
+  baseMetadata,
+  cardBearingPokedexNumbers,
+  getCardsByQuery,
+  getSiteCardIndex,
+} from "@lib";
 import { sortCardsByDateAndPokedex } from "@utils";
+
+// Refresh weekly (ISR); numbers without rare cards fall through to notFound().
+export const revalidate = 604800;
 
 interface Params {
   nationalPokedexNumber: string;
 }
 
 async function getData(pokedexNumber: string): Promise<PokemonTCG.ICard[]> {
-  try {
-    const response = await retryWithBackoff(() =>
-      PokemonTCG.findCardsByQueries({
-        q: `nationalPokedexNumbers:${pokedexNumber} -set.id:mcd* -rarity:*common* -rarity:*rainbow* -subtypes:V-UNION `,
-        orderBy: "-set.releaseDate",
-      })
-    );
-
-    return sortCardsByDateAndPokedex(response);
-  } catch (error) {
-    console.error(
-      `Error fetching Pokemon cards for Pokedex #${pokedexNumber}:`,
-      error
-    );
-    return [];
-  }
+  const response = await getCardsByQuery(
+    `nationalPokedexNumbers:${pokedexNumber} -set.id:mcd* -rarity:*common* -rarity:*rainbow* -subtypes:V-UNION`,
+    "-set.releaseDate"
+  );
+  return sortCardsByDateAndPokedex(response);
 }
 
 export async function generateMetadata({
@@ -42,71 +40,18 @@ export async function generateMetadata({
 
   const pokemonName: string = cards[0].name.split(" ")[0];
   const flavorText: string = cards[0]?.flavorText ?? "";
-  const artist: string = cards[0]?.artist ?? "";
-  const rarity: string = cards[0]?.rarity ?? "";
-  const setName: string = cards[0]?.set.name ?? "";
-  const abilities: string =
-    cards[0]?.abilities?.map((ability) => ability.name).join(", ") ?? "";
-  const attacks: string =
-    cards[0]?.attacks
-      ?.map((attack) => `${attack.name} (${attack.damage} damage)`)
-      .join(", ") ?? "";
-  const weaknesses: string =
-    cards[0]?.weaknesses
-      ?.map((weakness) => `weak to ${weakness.type}`)
-      .join(", ") ?? "";
-  const resistances: string =
-    cards[0]?.resistances
-      ?.map((resistance) => `resistant to ${resistance.type}`)
-      .join(", ") ?? "";
-  const evolvesFrom: string = cards[0].evolvesFrom
-    ? `evolves from ${cards[0].evolvesFrom}`
-    : "";
-  const evolvesTo: string = cards[0].evolvesTo?.[0]
-    ? `evolves to ${cards[0].evolvesTo[0]}`
-    : "";
-  const hp: string = cards[0].hp ? `HP ${cards[0].hp}` : "";
-  const set: string = cards[0].set.name ? `set ${cards[0].set.name}` : "";
-  const subtypes: string = cards[0].subtypes?.join(", ") ?? "";
-  const types: string = cards[0].types?.join(", ") ?? "";
 
   return {
     ...baseMetadata,
+    // Point at the full Pokédex page so the near-duplicate /rares view does
+    // not compete with it in search; the full page is the canonical one.
     alternates: {
-      canonical: `/pokedex/${resolvedParams.nationalPokedexNumber}/rares`,
+      canonical: `/pokedex/${resolvedParams.nationalPokedexNumber}`,
     },
     title: `#${resolvedParams.nationalPokedexNumber} ${pokemonName} - Rare Pokémon Cards`,
-    description: `Explore all ${pokemonName} (#${resolvedParams.nationalPokedexNumber}) Pokémon trading cards. ${flavorText}`,
-    keywords: [
-      pokemonName,
-      `#${resolvedParams.nationalPokedexNumber}`,
-      flavorText,
-      artist,
-      rarity,
-      setName,
-      abilities,
-      attacks,
-      weaknesses,
-      resistances,
-      evolvesFrom,
-      evolvesTo,
-      hp,
-      set,
-      subtypes,
-      types,
-      "pokemon",
-      "tcg",
-      "pokemon tcg",
-      ...cards
-        .map((card) => card.artist)
-        .filter((artist): artist is string => !!artist),
-      ...cards.map((card) => card.rarity ?? ""),
-      ...cards
-        .map((card) => card.set.name)
-        .filter((name): name is string => !!name),
-    ],
+    description: `Explore all ${pokemonName} (#${resolvedParams.nationalPokedexNumber}) rare Pokémon trading cards. ${flavorText}`,
     openGraph: {
-      title: `#${resolvedParams.nationalPokedexNumber} ${pokemonName} - Pokémon Cards`,
+      title: `#${resolvedParams.nationalPokedexNumber} ${pokemonName} - Rare Pokémon Cards`,
       description: `Explore all ${pokemonName} (#${resolvedParams.nationalPokedexNumber}) rare Pokémon trading cards. ${flavorText}`,
       url: `https://pokemon.bermeo.dev/pokedex/${resolvedParams.nationalPokedexNumber}`,
       section: pokemonName,
@@ -130,17 +75,13 @@ export async function generateStaticParams(): Promise<
     nationalPokedexNumber: string;
   }[]
 > {
-  // Generate static params for all 1025 pokemons
-  const pokemonNumbers: string[] = Array.from({ length: 1025 }, (_, i) =>
-    (i + 1).toString()
-  );
-
-  return pokemonNumbers.map((number) => ({
-    nationalPokedexNumber: number,
+  const index = await getSiteCardIndex();
+  return cardBearingPokedexNumbers(index).map((number) => ({
+    nationalPokedexNumber: number.toString(),
   }));
 }
 
-export default async function PokemonPage({
+export default async function RarePokemonPage({
   params,
 }: Readonly<{
   params: Promise<Params>;
@@ -149,26 +90,21 @@ export default async function PokemonPage({
   const cards: PokemonTCG.ICard[] = await getData(
     resolvedParams.nationalPokedexNumber
   );
-  const pokemonName: string =
-    cards[0]?.name.split(" ")[0] ||
-    `Pokemon #${resolvedParams.nationalPokedexNumber}`;
+
+  if (cards.length === 0) {
+    notFound();
+  }
+
+  const pokemonName: string = cards[0].name.split(" ")[0];
 
   return (
     <Body>
-      <Suspense>
-        {cards.length === 0 ? (
-          <div>No cards found for this Pokémon.</div>
-        ) : (
-          <>
-            <Header
-              title={pokemonName}
-              subtitle={`#${resolvedParams.nationalPokedexNumber}`}
-              totalCards={cards.length}
-            />
-            <CardGrid cardCollection={cards} />
-          </>
-        )}
-      </Suspense>
+      <Header
+        title={pokemonName}
+        subtitle={`#${resolvedParams.nationalPokedexNumber} · Rares`}
+        totalCards={cards.length}
+      />
+      <CardGrid cardCollection={cards} />
     </Body>
   );
 }

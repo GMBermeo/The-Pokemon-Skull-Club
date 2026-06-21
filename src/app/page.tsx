@@ -4,6 +4,9 @@ import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
 import { Body, CardGrid, Header } from "@components";
 import { baseMetadata, fetchPokemonCollection } from "@lib";
 
+// Refresh the homepage collection weekly (ISR) while keeping it static.
+export const revalidate = 604800;
+
 export async function generateMetadata(): Promise<Metadata> {
   return baseMetadata;
 }

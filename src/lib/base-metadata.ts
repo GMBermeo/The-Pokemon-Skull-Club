@@ -123,21 +123,40 @@ export const baseMetadata: Metadata = {
   category: "games",
 };
 
+export type OgImage = {
+  url: string;
+  width?: number;
+  height?: number;
+  alt?: string;
+  type?: string;
+};
+
 type BuildMetadataInput = {
   path: string;
   title?: string;
   description?: string;
   keywords?: string[];
+  /** Single image shorthand (relative paths are resolved against SITE_URL). */
   ogImage?: string;
+  /** Full Open Graph image objects, preserving dimensions and alt text. */
+  ogImages?: OgImage[];
   noindex?: boolean;
 };
 
+const toAbsolute = (url: string): string =>
+  url.startsWith("http") ? url : `${SITE_URL}${url}`;
+
+/**
+ * Single source of truth for page metadata. Every page routes through here so
+ * canonical, Open Graph and Twitter tags stay consistent and cannot drift.
+ */
 export function buildMetadata({
   path,
   title,
   description,
   keywords,
   ogImage,
+  ogImages,
   noindex,
 }: BuildMetadataInput): Metadata {
   const canonicalPath = path.startsWith("/") ? path : `/${path}`;
@@ -145,43 +164,32 @@ export function buildMetadata({
   const finalDescription = description ?? SITE_DESCRIPTION;
   const finalTitle = title ?? SITE_TITLE;
 
+  const resolvedImages: OgImage[] | undefined = ogImages
+    ? ogImages.map((image) => ({ ...image, url: toAbsolute(image.url) }))
+    : ogImage
+      ? [{ url: toAbsolute(ogImage), width: 1200, height: 630, alt: finalTitle }]
+      : undefined;
+
   return {
     ...baseMetadata,
     title,
     description: finalDescription,
     keywords: keywords ?? baseMetadata.keywords,
     alternates: { canonical: canonicalPath },
-    robots: noindex
-      ? { index: false, follow: false }
-      : baseMetadata.robots,
+    robots: noindex ? { index: false, follow: false } : baseMetadata.robots,
     openGraph: {
       ...baseMetadata.openGraph,
       title: finalTitle,
       description: finalDescription,
       url: fullUrl,
-      ...(ogImage
-        ? {
-            images: [
-              {
-                url: ogImage.startsWith("http") ? ogImage : `${SITE_URL}${ogImage}`,
-                width: 1200,
-                height: 630,
-                alt: finalTitle,
-              },
-            ],
-          }
-        : {}),
+      ...(resolvedImages ? { images: resolvedImages } : {}),
     },
     twitter: {
       ...baseMetadata.twitter,
       title: finalTitle,
       description: finalDescription,
-      ...(ogImage
-        ? {
-            images: [
-              ogImage.startsWith("http") ? ogImage : `${SITE_URL}${ogImage}`,
-            ],
-          }
+      ...(resolvedImages
+        ? { images: resolvedImages.map((image) => image.url) }
         : {}),
     },
   };
