@@ -18,8 +18,13 @@ export async function retryWithBackoff<T>(
     if (retries === 0 || apiError?.response?.status !== 429) {
       throw error;
     }
-    const delay =
-      baseDelay * 100 ** (3 - retries) * (0.9 + Math.random() * 0.2);
+    // Exponential backoff: 1s, 2s, 4s (+/-10% jitter), capped at 30s.
+    // NOTE: this previously used `100 ** (3 - retries)`, which produced
+    // 100s and 2.7h waits and made static generation hang on a single 429.
+    const delay = Math.min(
+      baseDelay * 2 ** (3 - retries) * (0.9 + Math.random() * 0.2),
+      30_000
+    );
     console.log(`Rate limited. Retrying in ${Math.round(delay)}ms...`);
 
     return retryWithBackoff(fn, retries - 1, baseDelay);

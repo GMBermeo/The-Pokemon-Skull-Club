@@ -1,6 +1,7 @@
-import { JSX, Suspense } from "react";
+import { JSX, Suspense, cache } from "react";
 import { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
 import { Body, CardDetails } from "@components";
 import { baseMetadata, fetchPokemonCollection, retryWithBackoff } from "@lib";
@@ -9,17 +10,17 @@ interface Params {
   cardId: string;
 }
 
-async function getData(cardId: string): Promise<PokemonTCG.ICard | undefined> {
-  try {
-    const response = await retryWithBackoff(() =>
-      PokemonTCG.findCardByID(cardId)
-    );
-
-    return response;
-  } catch (error) {
-    console.error(`Error fetching Pokemon cards at ${cardId} Page:`, error);
+// `cache` dedupes the fetch across `generateMetadata` and the page component,
+// so each render (build-time or on-demand ISR) hits the API once, not twice.
+const getData = cache(
+  async (cardId: string): Promise<PokemonTCG.ICard | undefined> => {
+    try {
+      return await retryWithBackoff(() => PokemonTCG.findCardByID(cardId));
+    } catch (error) {
+      console.error(`Error fetching Pokemon cards at ${cardId} Page:`, error);
+    }
   }
-}
+);
 
 export async function generateMetadata({
   params,
@@ -32,21 +33,8 @@ export async function generateMetadata({
   );
 
   if (!fetchedCard) {
-    return baseMetadata;
+    return { ...baseMetadata, robots: { index: false, follow: false } };
   }
-
-  const transformedArrayStrings: string[] = [
-    ...(fetchedCard.types ?? []),
-    fetchedCard.hp,
-    ...(fetchedCard.retreatCost ?? []),
-    ...(fetchedCard.attacks?.map((attack) => attack.name) ?? []),
-    ...(fetchedCard.weaknesses?.map((weakness) => weakness.type) ?? []),
-    ...(fetchedCard.resistances?.map((resistance) => resistance.type) ?? []),
-    fetchedCard.evolvesFrom,
-    ...(fetchedCard.evolvesTo ?? []),
-    ...(fetchedCard.abilities?.map((ability) => ability.name) ?? []),
-    fetchedCard.artist,
-  ].filter((item): item is string => !!item);
 
   const metadataObj: Metadata = {
     ...baseMetadata,
@@ -72,19 +60,6 @@ export async function generateMetadata({
       ],
       locale: "en_US",
     },
-    keywords: [
-      fetchedCard.name,
-      fetchedCard.supertype,
-      fetchedCard.rarity ?? "",
-      fetchedCard.set.name,
-      fetchedCard.set.series,
-      fetchedCard.set.id,
-      fetchedCard.id,
-      "pokemon",
-      "tcg",
-      "pokemon tcg",
-      ...transformedArrayStrings,
-    ].filter(Boolean),
   };
 
   return metadataObj;
@@ -188,59 +163,52 @@ export default async function CardPage({
     resolvedParams.cardId
   );
 
-  const cardJsonLd = card
-    ? {
-        "@context": "https://schema.org",
-        "@type": "CreativeWork",
-        name: card.name,
-        identifier: card.id,
-        url: `https://pokemon.bermeo.dev/card/${card.id}`,
-        image: card.images.large,
-        description: card.flavorText ?? `${card.name} - ${card.set.name}`,
-        author: card.artist
-          ? { "@type": "Person", name: card.artist }
-          : undefined,
-        isPartOf: { "@type": "CreativeWorkSeries", name: card.set.name },
-        datePublished: card.set.releaseDate,
-        about: { "@type": "Thing", name: card.supertype },
-        offers: card.tcgplayer?.prices?.normal?.market
-          ? {
-              "@type": "Offer",
-              priceCurrency: "USD",
-              price: card.tcgplayer.prices.normal.market,
-              availability: "https://schema.org/InStock",
-            }
-          : undefined,
-      }
-    : null;
+  // Serve a real 404 (not a soft-404 with 200) so crawlers drop the URL
+  // instead of indexing an empty shell and re-reading it forever.
+  if (!card) {
+    notFound();
+  }
+
+  const cardJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: card.name,
+    identifier: card.id,
+    url: `https://pokemon.bermeo.dev/card/${card.id}`,
+    image: card.images.large,
+    description: card.flavorText ?? `${card.name} - ${card.set.name}`,
+    author: card.artist ? { "@type": "Person", name: card.artist } : undefined,
+    isPartOf: { "@type": "CreativeWorkSeries", name: card.set.name },
+    datePublished: card.set.releaseDate,
+    about: { "@type": "Thing", name: card.supertype },
+    offers: card.tcgplayer?.prices?.normal?.market
+      ? {
+          "@type": "Offer",
+          priceCurrency: "USD",
+          price: card.tcgplayer.prices.normal.market,
+          availability: "https://schema.org/InStock",
+        }
+      : undefined,
+  };
 
   return (
     <Body>
-      {cardJsonLd && (
-        <script
-          type="application/ld+json"
-           
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(cardJsonLd) }}
-        />
-      )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(cardJsonLd) }}
+      />
       <div className="max-w-screen-lg">
         <Suspense>
-          {!card ? (
-            <div>Card not found.</div>
-          ) : (
-            <>
-              <div className="font-bold space-y-2 mb-4 justify-between flex xs:flex-col md:flex-row w-full">
-                <Link href="/">
-                  <h1 className="text-4xl">{card.name}</h1>{" "}
-                </Link>
-                <h2 className="text-lg">{card.id}</h2>
-              </div>
-              <h3 className="text-md mb-4">
-                {card.flavorText ?? card.abilities?.[0]?.name}
-              </h3>
-              <CardDetails card={card} />
-            </>
-          )}
+          <div className="font-bold space-y-2 mb-4 justify-between flex xs:flex-col md:flex-row w-full">
+            <Link href="/">
+              <h1 className="text-4xl">{card.name}</h1>{" "}
+            </Link>
+            <h2 className="text-lg">{card.id}</h2>
+          </div>
+          <h3 className="text-md mb-4">
+            {card.flavorText ?? card.abilities?.[0]?.name}
+          </h3>
+          <CardDetails card={card} />
         </Suspense>
       </div>
     </Body>
