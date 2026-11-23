@@ -2,25 +2,21 @@ import { JSX, Suspense, cache } from "react";
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
+import type { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
 import { Body, CardDetails } from "@components";
-import { baseMetadata, fetchPokemonCollection, retryWithBackoff } from "@lib";
+import { baseMetadata } from "@lib";
+import { fetchCard } from "@/lib/fetch-card";
 
 interface Params {
   cardId: string;
 }
 
-// `cache` dedupes the fetch across `generateMetadata` and the page component,
-// so each render (build-time or on-demand ISR) hits the API once, not twice.
-const getData = cache(
-  async (cardId: string): Promise<PokemonTCG.ICard | undefined> => {
-    try {
-      return await retryWithBackoff(() => PokemonTCG.findCardByID(cardId));
-    } catch (error) {
-      console.error(`Error fetching Pokemon cards at ${cardId} Page:`, error);
-    }
-  }
-);
+// Render a card once on its first visit, then reuse the server-generated HTML.
+// Monthly freshness is sufficient for this non-commercial collection site.
+export const revalidate = 2592000;
+
+// Deduplicate metadata/page reads, including negative results.
+const getData = cache(fetchCard);
 
 export async function generateMetadata({
   params,
@@ -65,92 +61,10 @@ export async function generateMetadata({
   return metadataObj;
 }
 
-export async function generateStaticParams(): Promise<
-  {
-    cardId: string;
-  }[]
-> {
-  try {
-    const artistQueries = [
-      'artist:"Akira Egawa"',
-      'artist:"Yuka Morii"',
-      'artist:"Mitsuhiro Arita"',
-      'artist:"Asako Ito"',
-      'artist:"Mékayu"',
-      'artist:"mingo"',
-      'artist:"osare"',
-      'artist:"Rond"',
-      'artist:"Saboteri"',
-      'artist:"Uninori"',
-      'artist:"Shimaris Yukichi"',
-      'artist:"Yukihiro Tada"',
-      'artist:"Yuriko Akase"',
-    ];
-
-    const pokemonQueries = [
-      "nationalPokedexNumbers:[1 TO 25]",
-      "nationalPokedexNumbers:[26 TO 50]",
-      "nationalPokedexNumbers:[51 TO 100]",
-      "nationalPokedexNumbers:[101 TO 125]",
-      "nationalPokedexNumbers:[126 TO 151]",
-      "nationalPokedexNumbers:[447 TO 448]",
-      "nationalPokedexNumbers:185",
-      "nationalPokedexNumbers:[158 TO 160]",
-    ];
-
-    const subtypeQueries = [
-      "subtypes:EX",
-      "subtypes:MEGA",
-      "subtypes:BREAK",
-      "subtypes:VMAX",
-      "subtypes:Baby",
-    ];
-
-    const staticCards = await Promise.allSettled([
-      ...artistQueries.map((artistQuery) =>
-        retryWithBackoff(() =>
-          PokemonTCG.findCardsByQueries({
-            q: `${artistQuery} -set.id:mcd* supertype:"Pokémon" -subtypes:V-UNION`,
-          })
-        )
-      ),
-      ...pokemonQueries.map((pokedexQuery) =>
-        retryWithBackoff(() =>
-          PokemonTCG.findCardsByQueries({
-            q: `${pokedexQuery} -set.id:mcd* -subtypes:V-UNION`,
-          })
-        )
-      ),
-      ...subtypeQueries.map((subtypeQuery) =>
-        retryWithBackoff(() =>
-          PokemonTCG.findCardsByQueries({
-            q: `${subtypeQuery} -set.id:mcd* -subtypes:V-UNION`,
-          })
-        )
-      ),
-      fetchPokemonCollection(),
-    ]);
-
-    // Filter for successful promises and flatten their values
-    const filteredStaticCards = staticCards
-      .filter(
-        (result): result is PromiseFulfilledResult<PokemonTCG.ICard[]> =>
-          result.status === "fulfilled"
-      )
-      .map((result) => result.value)
-      .flat()
-      .filter(
-        (card: PokemonTCG.ICard, index: number, self: PokemonTCG.ICard[]) =>
-          index === self.findIndex((t) => t.id === card.id)
-      );
-
-    return filteredStaticCards.map((card) => ({
-      cardId: card.id,
-    }));
-  } catch (error) {
-    console.error("Error fetching static Pokemon cards:", error);
-    return [];
-  }
+export async function generateStaticParams(): Promise<Params[]> {
+  // Do not discover and then individually re-fetch thousands of cards on every
+  // build. An empty list enables on-demand static generation, not per-visit SSR.
+  return [];
 }
 
 export default async function CardPage({

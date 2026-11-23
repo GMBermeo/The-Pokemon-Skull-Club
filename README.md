@@ -35,8 +35,11 @@ yarn type-check   # tsc --noEmit
 
 - External Pokémon TCG images served via `images.pokemontcg.io` with `unoptimized: true` (bypasses paid Image Optimization)
 - 1-year immutable cache headers on `/icons`, `/social`, `/opengraph`
-- All 1025 Pokédex pages statically generated at build (zero runtime invocations)
-- Build-time `Promise.all` parallelization on `fetch-collection.ts`
+- Both standard and rare pages for all 1025 Pokédex numbers are statically generated at build; unknown numbers return 404 without API calls
+- Card details use on-demand static generation: the first visit renders HTML on the server, then the page and upstream data are cached for 30 days. A first visit can be slower; prices are snapshots, not live quotes
+- Card discovery no longer fans out into thousands of individual API requests at every build
+- Collection fetching uses batches of four to reduce rate-limit bursts; 429 retries actually wait before retrying
+- Card API requests time out after 10 seconds. Only a genuine upstream 404 becomes a missing card; transient failures throw so revalidation retains the last successful page
 
 ## Migration
 

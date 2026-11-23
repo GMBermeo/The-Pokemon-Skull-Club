@@ -5,6 +5,9 @@ import { Body, CardGrid, Header } from "@components";
 import { baseMetadata, retryWithBackoff } from "@lib";
 import { sortCardsByDateAndPokedex } from "@utils";
 
+// Only the 1025 known Pokémon can generate pages; unknown paths are static 404s.
+export const dynamicParams = false;
+
 interface Params {
   nationalPokedexNumber: string;
 }
