@@ -1,4 +1,5 @@
-import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
+import type { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
+import { findCardsByQueries } from "@/lib/pokemon-tcg";
 
 interface ApiError extends Error {
   response?: {
@@ -82,7 +83,7 @@ export async function loadCards(
   for (const params of queries) {
     try {
       const response = await retryWithBackoff(() =>
-        PokemonTCG.findCardsByQueries(params)
+        findCardsByQueries(params)
       );
 
       for (const card of response) {

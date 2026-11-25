@@ -1,6 +1,6 @@
 import { JSX } from "react";
 import { Metadata } from "next";
-import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
+import type { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
 import { Body, CardGrid, Header } from "@components";
 import { baseMetadata, fetchPokemonCollection } from "@lib";
 

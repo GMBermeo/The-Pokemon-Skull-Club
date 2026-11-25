@@ -1,6 +1,7 @@
 import { JSX } from "react";
 import { Metadata } from "next";
-import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
+import type { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
+import { findCardsByQueries } from "@/lib/pokemon-tcg";
 import { Body, CardGrid, Header } from "@components";
 import { baseMetadata, retryWithBackoff } from "@lib";
 import { sortCardsByDateAndPokedex } from "@utils";
@@ -42,7 +43,7 @@ export async function generateMetadata(): Promise<Metadata> {
 async function getData(): Promise<PokemonTCG.ICard[]> {
   try {
     const response = await retryWithBackoff(() =>
-      PokemonTCG.findCardsByQueries({
+      findCardsByQueries({
         q: 'artist:"Asako Ito" -set.id:mcd* supertype:"Pokémon" -subtypes:V-UNION',
         orderBy: "-set.releaseDate",
       })
