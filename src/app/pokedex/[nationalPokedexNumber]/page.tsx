@@ -1,6 +1,7 @@
 import { JSX, Suspense, cache } from "react";
 import { Metadata } from "next";
-import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
+import type { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
+import { findCardsByQueries } from "@/lib/pokemon-tcg";
 import { Body, CardGrid, Header } from "@components";
 import { baseMetadata, retryWithBackoff } from "@lib";
 import { sortCardsByDateAndPokedex } from "@utils";
@@ -15,7 +16,7 @@ const getData = cache(
   async (pokedexNumber: string): Promise<PokemonTCG.ICard[]> => {
     try {
       const response = await retryWithBackoff(() =>
-        PokemonTCG.findCardsByQueries({
+        findCardsByQueries({
           q: `nationalPokedexNumbers:${pokedexNumber} -set.id:mcd* -subtypes:V-UNION `,
           orderBy: "-set.releaseDate",
         })

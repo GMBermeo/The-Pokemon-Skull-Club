@@ -1,6 +1,7 @@
 import type { JSX } from "react";
 import type { Metadata } from "next";
-import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
+import type { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
+import { findCardsByQueries } from "@/lib/pokemon-tcg";
 import { Body, CardGrid, Header } from "@components";
 import { buildMetadata, retryWithBackoff } from "@lib";
 import { sortCardsByDexNumber } from "@utils";
@@ -89,7 +90,7 @@ async function loadRange(start: number, end?: number): Promise<PokemonTCG.ICard[
       ? `nationalPokedexNumbers:[${start} TO ${end}] -set.id:mcd* -rarity:*common* -rarity:*rainbow* -subtypes:V-UNION -subtypes:BREAK`
       : `nationalPokedexNumbers:${start} -set.id:mcd* -rarity:*common* -rarity:*rainbow* -subtypes:V-UNION -subtypes:BREAK`;
     const response = await retryWithBackoff(() =>
-      PokemonTCG.findCardsByQueries({ q: query })
+      findCardsByQueries({ q: query })
     );
     return sortCardsByDexNumber(response);
   } catch (error) {

@@ -2,7 +2,8 @@ import { JSX, Suspense, cache } from "react";
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
+import type { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
+import { findCardsByQueries, findCardByID } from "@/lib/pokemon-tcg";
 import { Body, CardDetails } from "@components";
 import { baseMetadata, fetchPokemonCollection, retryWithBackoff } from "@lib";
 
@@ -15,7 +16,7 @@ interface Params {
 const getData = cache(
   async (cardId: string): Promise<PokemonTCG.ICard | undefined> => {
     try {
-      return await retryWithBackoff(() => PokemonTCG.findCardByID(cardId));
+      return await retryWithBackoff(() => findCardByID(cardId));
     } catch (error) {
       console.error(`Error fetching Pokemon cards at ${cardId} Page:`, error);
     }
@@ -109,21 +110,21 @@ export async function generateStaticParams(): Promise<
     const staticCards = await Promise.allSettled([
       ...artistQueries.map((artistQuery) =>
         retryWithBackoff(() =>
-          PokemonTCG.findCardsByQueries({
+          findCardsByQueries({
             q: `${artistQuery} -set.id:mcd* supertype:"Pokémon" -subtypes:V-UNION`,
           })
         )
       ),
       ...pokemonQueries.map((pokedexQuery) =>
         retryWithBackoff(() =>
-          PokemonTCG.findCardsByQueries({
+          findCardsByQueries({
             q: `${pokedexQuery} -set.id:mcd* -subtypes:V-UNION`,
           })
         )
       ),
       ...subtypeQueries.map((subtypeQuery) =>
         retryWithBackoff(() =>
-          PokemonTCG.findCardsByQueries({
+          findCardsByQueries({
             q: `${subtypeQuery} -set.id:mcd* -subtypes:V-UNION`,
           })
         )
