@@ -71,9 +71,18 @@ const POKEDEX_RANGES: readonly LoadArgs[] = [
 ];
 
 export async function fetchPokemonCollection(): Promise<PokemonTCG.ICard[]> {
-  const results = await Promise.all(
-    POKEDEX_RANGES.map(([start, end]) => loadCards(start, end))
-  );
+  const results: PokemonTCG.ICard[][] = [];
+  // Avoid bursting ~60 requests at the upstream API and triggering 429 retries.
+  const batchSize = 4;
+  for (let offset = 0; offset < POKEDEX_RANGES.length; offset += batchSize) {
+    results.push(
+      ...(await Promise.all(
+        POKEDEX_RANGES.slice(offset, offset + batchSize).map(([start, end]) =>
+          loadCards(start, end)
+        )
+      ))
+    );
+  }
 
   const flat = results.flat();
   const seen = new Set<string>();

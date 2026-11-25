@@ -28,6 +28,7 @@ export async function retryWithBackoff<T>(
     );
     console.log(`Rate limited. Retrying in ${Math.round(delay)}ms...`);
 
+    await new Promise<void>((resolve) => setTimeout(resolve, delay));
     return retryWithBackoff(fn, retries - 1, baseDelay);
   }
 }
