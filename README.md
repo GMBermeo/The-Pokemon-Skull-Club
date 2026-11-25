@@ -22,6 +22,25 @@ yarn lint         # ESLint
 yarn type-check   # tsc --noEmit
 ```
 
+## Pokémon TCG API key
+
+Set `POKEMONTCG_API_KEY` in the server environment (use `.env.local` for local
+development). Keep that exact name; never add a `NEXT_PUBLIC_` prefix or put the
+value in `next.config.ts`.
+
+For rotation, generate a replacement at the Pokémon TCG API provider, then save it
+as **Secret** under **Type** in the project's **Environment Variables** page for
+the environments that need it. Deploy again to pick up the new value, verify card
+requests succeed, and revoke the old key at the provider. If the old key is known
+to be compromised, revoke it immediately. Existing deployments keep their old
+environment values. Do not paste keys into source code, logs, issues or PRs.
+See [Vercel's Config and Secret documentation](https://vercel.com/docs/environment-variables/sensitive-environment-variables).
+
+All card requests must go through `src/lib/pokemon-tcg.ts`. This server-only
+boundary keeps the SDK out of client code and replaces credential-bearing SDK
+errors with a safe error that retains only the HTTP status for retries and 404s.
+Import SDK interfaces with `import type` when only types are needed.
+
 ## SEO
 
 - Dynamic `sitemap.ts` and `robots.ts` (Next.js Metadata API)

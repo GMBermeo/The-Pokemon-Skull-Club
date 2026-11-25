@@ -1,4 +1,4 @@
-import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
+import type { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
 import { loadCards } from "@lib";
 
 type LoadArgs = readonly [start: number, end?: number];

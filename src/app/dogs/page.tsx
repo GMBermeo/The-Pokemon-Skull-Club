@@ -1,6 +1,7 @@
 import type { JSX } from "react";
 import type { Metadata } from "next";
-import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
+import type { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
+import { findCardsByQueries } from "@/lib/pokemon-tcg";
 import { Body, CardGrid, Header } from "@components";
 import { buildMetadata, retryWithBackoff } from "@lib";
 import { sortCardsByDateAndPokedex } from "@utils";
@@ -34,7 +35,7 @@ async function getData(): Promise<PokemonTCG.ICard[]> {
     const results = await Promise.all(
       DOG_POKEMON_NUMBERS.map((pokedexNumber) =>
         retryWithBackoff(() =>
-          PokemonTCG.findCardsByQueries({
+          findCardsByQueries({
             q: `nationalPokedexNumbers:${pokedexNumber} -set.id:mcd* -subtypes:V-UNION`,
             orderBy: "-set.releaseDate",
           })

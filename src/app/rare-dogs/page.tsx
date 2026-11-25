@@ -1,6 +1,7 @@
 import { JSX } from "react";
 import { Metadata } from "next";
-import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
+import type { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
+import { findCardsByQueries } from "@/lib/pokemon-tcg";
 import { Body, CardGrid, Header } from "@components";
 import { baseMetadata, retryWithBackoff } from "@lib";
 import { sortCardsByDateAndPokedex } from "@utils";
@@ -86,7 +87,7 @@ async function getData(): Promise<PokemonTCG.ICard[]> {
     // Fetch cards for each Pokémon number individually
     for (const pokedexNumber of dogPokemonNumbers) {
       const response = await retryWithBackoff(() =>
-        PokemonTCG.findCardsByQueries({
+        findCardsByQueries({
           q: `nationalPokedexNumbers:${pokedexNumber} -set.id:mcd* -rarity:*rainbow* -rarity:*common* -subtypes:V-UNION`,
           orderBy: "-set.releaseDate",
         })

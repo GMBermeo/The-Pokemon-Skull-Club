@@ -1,4 +1,4 @@
-import { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
+import type { PokemonTCG } from "@pokelib/pokemon-tcg-sdk-typescript";
 
 export function sortCardsByDateAndPokedex(
   cards: PokemonTCG.ICard[]
