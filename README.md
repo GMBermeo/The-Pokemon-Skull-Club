@@ -58,7 +58,9 @@ Import SDK interfaces with `import type` when only types are needed.
 - Card details use on-demand static generation: the first visit renders HTML on the server, then the page and upstream data are cached for 30 days. A first visit can be slower; prices are snapshots, not live quotes
 - Card discovery no longer fans out into thousands of individual API requests at every build
 - Collection fetching uses batches of four to reduce rate-limit bursts; 429 retries actually wait before retrying
-- Card API requests time out after 10 seconds. Only a genuine upstream 404 becomes a missing card; transient failures throw so revalidation retains the last successful page
+- Card API requests time out after 10 seconds. On network failures, 429s, or 5xx responses, card details fall back to the API provider's [published historical data](https://github.com/PokemonTCG/pokemon-tcg-data), joining the card with its set. This public request never receives the API key and has no market prices; the page omits pricing when unavailable. Fallback data revalidates hourly so the page can recover API pricing without waiting a month
+- Only a genuine upstream 404 becomes a missing card. If both sources fail, or the historical dataset lacks a card/set, rendering still throws so revalidation retains the last successful page. Authentication errors are not hidden by the fallback
+- The provider has announced that the Pokémon TCG API will shut down on March 1, 2027. This historical-data fallback mitigates outages; migrating collection queries and pricing to a maintained provider remains separate work
 
 ## Migration
 
